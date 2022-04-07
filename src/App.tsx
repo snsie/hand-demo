@@ -1,45 +1,52 @@
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0);
+// import ButtonAppBar from './components/app-bar';
+import { ThemeProvider } from '@mui/material/styles';
+// import { StyledEngineProvider } from '@mui/material/styles';
+// import TaskTitle from './components/task-title/task-title';
+import TaskPicker from './components/task-picker';
+import theme from './components/theme';
+import WaitSpinner from './components/wait-spinner';
 
+const App = () => {
+  const [selectedIndex, setSelectedIndex] = useState(2);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
+    <ThemeProvider theme={theme}>
+      <div className="App">
+        {/* <ButtonAppBar taskCallback={setSelectedIndex} /> */}
+        <h2>
+          Please watch{' '}
           <a
-            className="App-link"
-            href="https://reactjs.org"
+            href="https://www.youtube.com/watch?v=bxe2T-V8XRs&list=PLiaHhY2iBX9hdHaRr6b7XevZtgZRa1PoU&index=1&ab_channel=WelchLabs"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Learn React
-          </a>
-          {' | '}
+            this
+          </a>{' '}
+          series on neural networks
+        </h2>
+        <h2>
+          Please read the first four chapters of{' '}
           <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
+            href="https://automatetheboringstuff.com/"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
+            this
+          </a>{' '}
+          introduction to python
+        </h2>
+        {/* <TaskTitle titleIndex={selectedIndex} /> */}
+        <Suspense fallback={<WaitSpinner />}>
+          <TaskPicker selectedIndex={selectedIndex} />
+        </Suspense>
+        <h3>Display your hands to your webcam!</h3>
+        <h3>Gamification Coming Soon!</h3>
+      </div>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;
