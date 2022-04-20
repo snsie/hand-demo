@@ -6,15 +6,17 @@ import './App.css';
 import { ThemeProvider } from '@mui/material/styles';
 // import { StyledEngineProvider } from '@mui/material/styles';
 // import TaskTitle from './components/task-title/task-title';
-import TaskPicker from './components/task-picker';
-import theme from './components/theme';
-import WaitSpinner from './components/wait-spinner';
+import themeColors from '@/utils/theme-colors';
+import WaitSpinner from '@/components/dom/wait-spinner/wait-spinner';
+// import CanvasBackground from './components/canvas/canvas';
+import HandTask from '@/components/dom/hand/hand';
 
 const App = () => {
   const [selectedIndex, setSelectedIndex] = useState(2);
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={themeColors}>
       <div className="App">
+        {/* <CanvasBackground /> */}
         {/* <ButtonAppBar taskCallback={setSelectedIndex} /> */}
         <h2>
           Please watch{' '}
@@ -40,7 +42,7 @@ const App = () => {
         </h2>
         {/* <TaskTitle titleIndex={selectedIndex} /> */}
         <Suspense fallback={<WaitSpinner />}>
-          <TaskPicker selectedIndex={selectedIndex} />
+          <HandTask />
         </Suspense>
         <h3>Display your hands to your webcam!</h3>
         <h3>Gamification Coming Soon!</h3>
