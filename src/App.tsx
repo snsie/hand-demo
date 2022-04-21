@@ -8,7 +8,7 @@ import { ThemeProvider } from '@mui/material/styles';
 // import TaskTitle from './components/task-title/task-title';
 import themeColors from '@/utils/theme-colors';
 import WaitSpinner from '@/components/dom/wait-spinner/wait-spinner';
-// import CanvasBackground from './components/canvas/canvas';
+import AppCanvas from '@/components/canvas/app-canvas';
 import HandTask from '@/components/dom/hand/hand';
 
 const App = () => {
@@ -16,7 +16,7 @@ const App = () => {
   return (
     <ThemeProvider theme={themeColors}>
       <div className="App">
-        {/* <CanvasBackground /> */}
+        <AppCanvas />
         {/* <ButtonAppBar taskCallback={setSelectedIndex} /> */}
         <h2>
           Please watch{' '}
