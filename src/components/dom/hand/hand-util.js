@@ -1,3 +1,4 @@
+//from: https://github.com/tensorflow/tfjs-models/tree/master/hand-pose-detection/demos/live_video
 /**
  * @license
  * Copyright 2021 Google LLC. All Rights Reserved.

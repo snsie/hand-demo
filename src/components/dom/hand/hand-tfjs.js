@@ -1,3 +1,5 @@
+//from: https://github.com/tensorflow/tfjs-models/tree/master/hand-pose-detection/demos/live_video
+
 /**
  * @license
  * Copyright 2021 Google LLC. All Rights Reserved.
@@ -17,12 +19,17 @@
 
 //  import '@tensorflow/tfjs-backend-webgl';
 import * as mpHands from '@mediapipe/hands';
-import * as scatter from 'scatter-gl';
-//  import * as tfjsWasm from '@tensorflow/tfjs-backend-wasm';
+// import * as mpHands from '../../../utils/hands';
 
-//  tfjsWasm.setWasmPaths(
-//      `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@${
-//          tfjsWasm.version_wasm}/dist/`);
+import * as scatter from 'scatter-gl';
+
+import * as tfjsWasm from '@tensorflow/tfjs-backend-wasm';
+// import workletURL from "`https://cdn.jsdelivr.net/npm/@mediapipe/hands@${mpHands.VERSION}`?url"
+console.log(`https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@${tfjsWasm.version_wasm}/dist/`)
+tfjsWasm.setWasmPaths(
+  `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@${tfjsWasm.version_wasm}/dist/`
+);
+
 
 import * as handdetection from '@tensorflow-models/hand-pose-detection';
 
@@ -54,7 +61,11 @@ async function createDetector() {
   switch (STATE.model) {
     case handdetection.SupportedModels.MediaPipeHands:
       const runtime = STATE.backend.split('-')[0];
+      console.log(runtime)
       if (runtime === 'mediapipe') {
+        // console.log(
+        //   `https://cdn.jsdelivr.net/npm/@mediapipe/hands@${mpHands.VERSION}`
+        // );
         return handdetection.createDetector(STATE.model, {
           runtime,
           modelType: STATE.modelConfig.type,

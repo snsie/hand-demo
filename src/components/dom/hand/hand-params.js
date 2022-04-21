@@ -1,3 +1,5 @@
+//from: https://github.com/tensorflow/tfjs-models/tree/master/hand-pose-detection/demos/live_video
+
 /**
  * @license
  * Copyright 2021 Google LLC. All Rights Reserved.
@@ -26,7 +28,7 @@ export const VIDEO_SIZE = {
 };
 export const STATE = {
   camera: { targetFPS: 60, sizeOption: '640 X 480' },
-  backend: 'tfjs-webgl',
+  backend: 'mediapipe-gpu',
   flags: {},
   modelConfig: {},
 };
@@ -60,7 +62,7 @@ export const TUNABLE_FLAG_VALUE_RANGE_MAP = {
 };
 
 export const BACKEND_FLAGS_MAP = {
-    //  ['tfjs-wasm']: ['WASM_HAS_SIMD_SUPPORT', 'WASM_HAS_MULTITHREAD_SUPPORT'],
+     ['tfjs-wasm']: ['WASM_HAS_SIMD_SUPPORT', 'WASM_HAS_MULTITHREAD_SUPPORT'],
   ['tfjs-webgl']: [
     'WEBGL_VERSION',
     'WEBGL_CPU_FORWARD',
@@ -74,8 +76,8 @@ export const BACKEND_FLAGS_MAP = {
 
 export const MODEL_BACKEND_MAP = {
   [handdetection.SupportedModels.MediaPipeHands]: [
-    'tfjs-webgl',
     'mediapipe-gpu',
+    'tfjs-webgl',
   ],
 };
 
