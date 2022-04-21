@@ -33,6 +33,7 @@ export const STATE = {
 export const MEDIAPIPE_HANDS_CONFIG = {
   type: 'full',
   render3D: true,
+  maxNumHands: 1,
 };
 /**
  * This map descripes tunable flags and theior corresponding types.

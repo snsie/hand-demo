@@ -18,6 +18,7 @@
 //  import '@tensorflow/tfjs-backend-webgl';
 import * as mpHands from '@mediapipe/hands';
 import * as scatter from 'scatter-gl';
+import * as THREE from 'three';
 //  import * as tfjsWasm from '@tensorflow/tfjs-backend-wasm';
 
 //  tfjsWasm.setWasmPaths(
@@ -156,6 +157,36 @@ async function renderResult() {
 
     endEstimateHandsStats();
   }
+
+  // print orientation using quaternions for first hand detected
+  if (hands && hands.length > 0)
+  {
+    // calculate orientation of hand to camera
+    // TODO: add in gestures for holding scapel, check distances between fingers and hands, and use quaternion for proper hand orientation
+    const hand = hands[0];
+    const camera_unit = new THREE.Vector3(1, 0, 0);
+    let wrist = hand.keypoints3D[0];
+    let thumb = hand.keypoints3D[1];
+    let middle = hand.keypoints3D[10]
+
+    wrist = new THREE.Vector3(wrist.x, wrist.y, wrist.z);
+    thumb = new THREE.Vector3(thumb.x, thumb.y, thumb.z);
+    middle = new THREE.Vector3(middle.x, middle.y, middle.z);
+    wrist.normalize();
+    thumb.normalize();
+    middle.normalize();
+
+    thumb.sub(wrist);
+    middle.sub(wrist);
+
+    // now thumb should be a vector on the plane of the hand pointing out from the palm
+    thumb.cross(middle);
+
+    const quaternion = new THREE.Quaternion();
+    quaternion.setFromAxisAngle(wrist, thumb.angleTo(camera_unit));
+    console.log(quaternion);
+  }
+
 
   camera.drawCtx();
 

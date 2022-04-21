@@ -16,22 +16,22 @@
  */
  import * as handdetection from '@tensorflow-models/hand-pose-detection';
  import * as tf from '@tensorflow/tfjs';
- 
+
  import * as params from './hand-params';
  import * as dat from 'dat.gui'
- 
+
  /**
   * Records each flag's default value under the runtime environment and is a
   * constant in runtime.
   */
  let TUNABLE_FLAG_DEFAULT_VALUE_MAP;
- 
+
  const stringValueMap = {};
- 
+
  export async function setupDatGui() {
    const gui = new dat.GUI({width: 300});
    gui.domElement.id = 'gui';
- 
+
    // The camera folder contains options for video settings.
    const cameraFolder = gui.addFolder('Camera');
    const fpsController = cameraFolder.add(params.STATE.camera, 'targetFPS');
@@ -44,10 +44,10 @@
      params.STATE.isSizeOptionChanged = true;
    });
    cameraFolder.open();
- 
+
    // The model folder contains options for model selection.
    const modelFolder = gui.addFolder('Model');
- 
+
 //    const model = urlParams.get('model');
    const model = 'mediapipe_hands';
 //    let type = urlParams.get('type');
@@ -70,29 +70,29 @@
     //    alert(`${urlParams.get('model')}`);
        break;
    }
- 
+
    const modelController = modelFolder.add(
        params.STATE, 'model', Object.values(handdetection.SupportedModels));
- 
+
    modelController.onChange(_ => {
      params.STATE.isModelChanged = true;
      showModelConfigs(modelFolder);
      showBackendConfigs(backendFolder);
    });
- 
+
    showModelConfigs(modelFolder, type, maxNumHands);
- 
+
    modelFolder.open();
- 
+
    const backendFolder = gui.addFolder('Backend');
- 
+
    showBackendConfigs(backendFolder);
- 
+
    backendFolder.open();
- 
+
    return gui;
  }
- 
+
  async function showBackendConfigs(folderController) {
    // Clean up backend configs for the previous model.
    const fixedSelectionCount = 0;
@@ -113,7 +113,7 @@
    });
    await showFlagSettings(folderController, params.STATE.backend);
  }
- 
+
  function showModelConfigs(folderController, type, maxNumHands) {
    // Clean up model configs for the previous model.
    // The first constroller under the `folderController` is the model
@@ -124,7 +124,7 @@
          folderController
              .__controllers[folderController.__controllers.length - 1]);
    }
- 
+
    switch (params.STATE.model) {
      case handdetection.SupportedModels.MediaPipeHands:
        addMediaPipeHandsControllers(folderController, type, maxNumHands);
@@ -133,14 +133,14 @@
        alert(`Model ${params.STATE.model} is not supported.`);
    }
  }
- 
+
  // The MediaPipeHands model config folder contains options for MediaPipeHands config
  // settings.
  function addMediaPipeHandsControllers(modelConfigFolder, type, maxNumHands) {
    params.STATE.modelConfig = {...params.MEDIAPIPE_HANDS_CONFIG};
    params.STATE.modelConfig.type = type != null ? type : 'full';
    params.STATE.modelConfig.maxNumHands = maxNumHands != null ? maxNumHands : 2;
- 
+
    const typeController = modelConfigFolder.add(
        params.STATE.modelConfig, 'type', ['lite', 'full']);
    typeController.onChange(_ => {
@@ -148,7 +148,7 @@
      // changing models.
      params.STATE.isModelChanged = true;
    });
- 
+
    const maxNumHandsController = modelConfigFolder.add(
      params.STATE.modelConfig, 'maxNumHands', 1, 10).step(1);
      maxNumHandsController.onChange(_ => {
@@ -156,7 +156,7 @@
      // changing models.
      params.STATE.isModelChanged = true;
    });
- 
+
    const render3DController =
        modelConfigFolder.add(params.STATE.modelConfig, 'render3D');
    render3DController.onChange(render3D => {
@@ -166,7 +166,7 @@
          render3D ? 'inline-block' : 'none';
    });
  }
- 
+
  /**
   * Query all tunable flags' default value and populate `STATE.flags` with them.
   */
@@ -181,7 +181,7 @@
        TUNABLE_FLAG_DEFAULT_VALUE_MAP[flag] = await tf.env().getAsync(flag);
      }
    }
- 
+
    // Initialize STATE.flags with tunable flags' default values.
    for (const flag in TUNABLE_FLAG_DEFAULT_VALUE_MAP) {
      if (params.BACKEND_FLAGS_MAP[params.STATE.backend].indexOf(flag) > -1) {
@@ -189,7 +189,7 @@
      }
    }
  }
- 
+
  /**
   * Heuristically determine flag's value range based on flag's default value.
   *
@@ -225,7 +225,7 @@
      return [defaultValue];
    }
  }
- 
+
  /**
   * Show flag settings for the given backend under the UI element of
   * `folderController`.
@@ -238,7 +238,7 @@
    for (let index = 0; index < tunableFlags.length; index++) {
      const flag = tunableFlags[index];
      const flagName = params.TUNABLE_FLAG_NAME_MAP[flag] || flag;
- 
+
      // When tunable (bool) and range (array) attributes of `flagRegistry` is
      // implemented, we can apply them to here.
      const flagValueRange = getTunableRange(flag);
@@ -249,7 +249,7 @@
            `because its value range is [${flagValueRange}].`);
        continue;
      }
- 
+
      let flagController;
      if (typeof flagValueRange[0] === 'boolean') {
        // Show checkbox for boolean flags.
@@ -258,7 +258,7 @@
        // Show dropdown for other types of flags.
        flagController =
            folderController.add(params.STATE.flags, flag, flagValueRange);
- 
+
        // Because dat.gui always casts dropdown option values to string, we need
        // `stringValueMap` and `onFinishChange()` to recover the value type.
        if (stringValueMap[flag] == null) {
@@ -278,7 +278,7 @@
      });
    }
  }
- 
+
  /**
   * Set up flag settings under the UI element of `folderController`:
   * - If it is the first call, initialize the flags' default value and show flag
@@ -291,7 +291,7 @@
   */
  async function showFlagSettings(folderController, backendName) {
    await initDefaultValueMap();
- 
+
    // Clean up flag settings for the previous backend.
    // The first constroller under the `folderController` is the backend
    // setting.
@@ -301,7 +301,7 @@
          folderController
              .__controllers[folderController.__controllers.length - 1]);
    }
- 
+
    // Show flag settings for the new backend.
    showBackendFlagSettings(folderController, backendName);
  }
