@@ -1,13 +1,11 @@
 import { useEffect } from 'react';
 import handTask from '@/tfjs/hand-tfjs';
 import '@/styles/hand.css';
-import useTfjsWorkerHook from '@/hooks/use-tfjs-worker.hook';
 
 export default function HandTask() {
   useEffect(() => {
     handTask();
   }, []);
-  useTfjsWorkerHook();
   return (
     <div className="Task-div">
       <div className="Spacing-div" />

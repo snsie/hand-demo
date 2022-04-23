@@ -26,13 +26,14 @@ export const VIDEO_SIZE = {
   '640 X 360': { width: 640, height: 360 },
   '360 X 270': { width: 360, height: 270 },
 };
-export const STATE = {
-  camera: { targetFPS: 10, sizeOption: '640 X 480' },
-  backend: 'tfjs-webgl',
-  flags: {},
-  modelConfig: {},
-model: handdetection.SupportedModels.MediaPipeHands
 
+export const STATE = {
+  camera: { targetFPS: 60, sizeOption: '640 X 480' },
+  backend: 'tfjs-webgl',
+  runtime: 'tfjs' as 'tfjs',
+  flags: {},
+  modelConfig: {} as any,
+  model: handdetection.SupportedModels.MediaPipeHands,
 };
 export const MEDIAPIPE_HANDS_CONFIG = {
   type: 'full', // or lite
@@ -63,24 +64,23 @@ export const TUNABLE_FLAG_VALUE_RANGE_MAP = {
   CHECK_COMPUTATION_FOR_ERRORS: [true, false],
 };
 
-export const BACKEND_FLAGS_MAP = {
-    //  ['tfjs-wasm']: ['WASM_HAS_SIMD_SUPPORT', 'WASM_HAS_MULTITHREAD_SUPPORT'],
-  ['tfjs-cpu']: [
-    'WEBGL_VERSION',
-    'WEBGL_CPU_FORWARD',
-    'WEBGL_PACK',
-    'WEBGL_FORCE_F16_TEXTURES',
-    'WEBGL_RENDER_FLOAT32_CAPABLE',
-    'WEBGL_FLUSH_THRESHOLD',
-  ],
-  ['mediapipe-gpu']: [],
-};
+// export const BACKEND_FLAGS_MAP = {
+//   //  ['tfjs-wasm']: ['WASM_HAS_SIMD_SUPPORT', 'WASM_HAS_MULTITHREAD_SUPPORT'],
+//   ['tfjs-cpu']: [
+//     'WEBGL_VERSION',
+//     'WEBGL_CPU_FORWARD',
+//     'WEBGL_PACK',
+//     'WEBGL_FORCE_F16_TEXTURES',
+//     'WEBGL_RENDER_FLOAT32_CAPABLE',
+//     'WEBGL_FLUSH_THRESHOLD',
+//   ],
+//   ['mediapipe-gpu']: [],
+// };
 
 export const MODEL_BACKEND_MAP = {
   [handdetection.SupportedModels.MediaPipeHands]: [
     'tfjs-webgl',
     'mediapipe-gpu',
-  
   ],
 };
 
