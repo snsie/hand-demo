@@ -1,19 +1,15 @@
 import { useEffect } from 'react';
-import handTask from '@/tfjs/hand-tfjs';
 import '@/styles/hand.css';
 
 export default function HandTask() {
-  useEffect(() => {
-    handTask();
-  }, []);
   return (
     <div className="Task-div">
       <div className="Spacing-div" />
       <div className="Hand-div">
         <div className="container">
-          <div className="canvas-wrapper" id="canvas-wrapper">
-            <canvas id="output"></canvas>
-            <video className="Hand-video" id="video" playsInline></video>
+          <div className="canvas-wrapper" id="canvas-wrapper" hidden>
+            <canvas id="output" hidden></canvas>
+            <video className="Hand-video" id="video" playsInline hidden></video>
           </div>
           <div id="scatter-gl-container-left"></div>
         </div>

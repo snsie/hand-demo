@@ -1,9 +1,13 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import createTfjsWorker from '@/utils/create-tfjs-worker';
-import handTask from '@/tfjs/hand-tfjs';
+import webcamSetup from '@/webcam/webcam-setup';
+import WebcamStream from '@/webcam/webcam';
+// import webcamDraw from '@/webcam/webcam-draw';
+import { drawWaitTime } from '@/webcam/webcam-params';
 export default function useTfjsWorkerHook() {
   const tfjsWorker = useMemo(createTfjsWorker, []);
   const tfjsWorkerRef = useRef<Worker>(tfjsWorker);
+  const webcamRef = useRef<WebcamStream>();
 
   useEffect(() => {
     tfjsWorkerRef.current = tfjsWorker;
@@ -19,8 +23,58 @@ export default function useTfjsWorkerHook() {
   // useEffect(() => {
 
   // }, []);
-  useEffect(() => {
-    handTask(tfjsWorkerRef.current);
+  useLayoutEffect(() => {
+    let rafId, timeCurrent, timeDelta;
+    // const f = async () => {
+    //   const test = await webcamSetup();
+    //   console.log(test);
+    // };
+    // f();
+    let timePrevious = performance.now();
+    webcamSetup().then((val) => (webcamRef.current = val));
+    async function renderFrames() {
+      rafId = requestAnimationFrame(renderFrames);
+
+      if (webcamRef.current) {
+        timeCurrent = performance.now();
+
+        timeDelta = timeCurrent - timePrevious;
+        if (timeDelta > drawWaitTime) {
+          const pixels = webcamRef.current.drawCtx();
+          // const pixels = await webcamDraw(webcamRef.current);
+          // console.log('hit')
+          tfjsWorkerRef.current.postMessage(
+            {
+              pixels: pixels.data.buffer,
+              width: webcamRef.current.canvas.width,
+              height: webcamRef.current.canvas.height,
+              channels: 4,
+            },
+            [pixels.data.buffer]
+          );
+
+          timePrevious = timeCurrent - (timeDelta % drawWaitTime);
+        }
+      }
+    }
+    rafId = requestAnimationFrame(renderFrames);
+    const cleanupWebCam = () => {
+      cancelAnimationFrame(rafId);
+    };
+
+    return () => {
+      cleanupWebCam();
+    };
+    // handTask(tfjsWorkerRef.current);
   }, []);
   return null;
 }
+// worker.postMessage(
+//   {
+//     pixels: pixels.data.buffer,
+//     width: camera.canvas.width,
+//     height: camera.canvas.height,
+//     channels: 4,
+//   },
+//   [pixels.data.buffer]
+// );
