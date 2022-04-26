@@ -1,4 +1,4 @@
-import { Suspense, useState } from 'react';
+import { Suspense, useState ,useCallback} from 'react';
 import logo from './logo.svg';
 import './App.css';
 
@@ -20,7 +20,7 @@ import HandTask from '@/components/dom/hand/hand';
 
 let level = "";
 
-export function LevelSelect()
+export function LevelSelect({inGame})
 {
   const [value, setValue] = useState("level");
 
@@ -29,67 +29,106 @@ export function LevelSelect()
     setValue(level);
   };
 
-  let level_image;
+  let level_image, wid, hei;
 
   if (level == "level1")
   {
     level_image = "https://imgs.search.brave.com/CURPjqRKnYVEG9mnMhCaesK6Y3nM10hAPvIptO7xURk/rs:fit:675:498:1/g:ce/aHR0cHM6Ly93d3cu/aGFuZHN1cmdlcnly/ZXNvdXJjZS5jb20v/c2l0ZXMvZGVmYXVs/dC9maWxlcy9pbWFn/ZXMvU3luZGFjdHls/eTFfMC5qcGc"
+    wid = 320;
+    hei = 320;
+  }
+  else if (level == "level2")
+  {
+    level_image = ""
+    wid = 320;
+    hei = 320;
+  }
+  else if (level == "level3")
+  {
+    level_image = ""
+    wid = 320;
+    hei = 320;
   }
   else
   {
     level_image = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+    wid = 0;
+    hei = 0;
   }
 
-  return (
-    <div>
-      <FormControl>
-        <FormLabel id="levelselect"></FormLabel>
-        <RadioGroup
-          aria-labelledby="levelselect"
-          name="levelselect-radio"
-          onChange={handleChange}
-        >
-          <FormControlLabel value="level1" control={<Radio />} label="Level 1 - Syndactyly Surgey (Splitting conjoined fingers)" />
-          <FormControlLabel value="level2" control={<Radio />} label="Level 2" />
-          <FormControlLabel value="level3" control={<Radio />} label="Level 3" />
-        </RadioGroup>
-      </FormControl>
+  if (!inGame)
+  {
+      return (
+          <div>
+          <h1>
+            AI in Webdev Online Game
+          </h1>
+          <h3> Complete surgies in this AR game using your camera and AI for hand gestures! </h3>
+          <br />
+          <h3>Choose your level:</h3>
+          <FormControl>
+            <FormLabel id="levelselect"></FormLabel>
+            <RadioGroup
+              aria-labelledby="levelselect"
+              name="levelselect-radio"
+              onChange={handleChange}
+            >
+              <FormControlLabel value="level1" control={<Radio />} label="Level 1 - Syndactyly Surgey (Splitting conjoined fingers)" />
+              <FormControlLabel value="level2" control={<Radio />} label="Level 2 - Electrocauterization (Cauterizing blood vessels)" />
+              <FormControlLabel value="level3" control={<Radio />} label="Level 3 - Suturing" />
+            </RadioGroup>
+          </FormControl>
+          <br />
+          <img src={level_image} alt="Level Image" width={wid} height={hei}/>
 
-      <img src={level_image} alt="Level Image" />
-
-    </div>
-  );
+        </div>
+      );
+  }
+  else
+  {
+    return;
+  }
 }
 
-export function StartGame()
+export function StartGameButton({inGame, onClickCallback})
 {
-  console.log(level);
+  if (!inGame)
+    return (
+      <Button variant="contained" size="large" endIcon={<PlayArrowIcon />} onClick={onClickCallback}>Start Game</Button>
+    );
+  else
+    return;
 }
 
-export function StartGameButton()
+export function StartLevel({inGame})
 {
+  if (!inGame)
+    return;
+
   return (
-    <Button variant="contained" size="large" endIcon={<PlayArrowIcon />} onClick={StartGame}>Start Game</Button>
+    <Suspense fallback={<WaitSpinner />}>
+      <HandTask />
+    </Suspense>
   );
 }
 
 const App = () => {
   const [selectedIndex, setSelectedIndex] = useState(2);
+
+  const [inGame, toggleClicked] = useState(false);
+  const onClickCallback = useCallback(() => {
+    toggleClicked(val => !val)
+  },[]);
+
   return (
     <ThemeProvider theme={themeColors}>
       <div className="App">
         {/* <CanvasBackground /> */}
         {/* <ButtonAppBar taskCallback={setSelectedIndex} /> */}
-        <h1>
-          AI in Webdev Online Game
-        </h1>
-        <h3> Complete surgies in this AR game using your camera and AI for hand gestures! </h3>
+        <LevelSelect inGame={inGame} />
+        <StartLevel inGame={inGame} />
         <br />
-        <h3>Choose your level:</h3>
-        {LevelSelect()}
-        <br />
-        {StartGameButton()}
-        <hr />
+        <StartGameButton inGame={inGame} onClickCallback={onClickCallback} />
         <p>
           Please watch{' '}
           <a
