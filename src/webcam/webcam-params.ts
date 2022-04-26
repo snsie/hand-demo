@@ -29,7 +29,7 @@ export const imageLength = 270;
 
 export const pixelBufferLength = 4 * imageWidth * imageLength;
 
-const targetFps = 30;
+const targetFps = 12;
 export const drawWaitTime = 1000 / targetFps;
 export const STATE = {
   camera: { targetFPS: targetFps, sizeOption: '360 X 270' },

@@ -15,6 +15,7 @@ const App = () => {
   return (
     <ThemeProvider theme={themeColors}>
       <div className="App">
+        {Math.random()}
         {/* <ButtonAppBar taskCallback={setSelectedIndex} /> */}
         <AppDom />
         <AppCanvas />

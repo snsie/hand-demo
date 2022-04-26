@@ -13,16 +13,14 @@ export default function useTfjsWorkerHook() {
     tfjsWorkerRef.current = tfjsWorker;
 
     tfjsWorker.onmessage = (e) => {
-      // console.log(e.data);
+      // console.log(e.data.wristVec);
     };
     const cleanup = () => {
       tfjsWorker.terminate();
     };
     return cleanup;
   }, [tfjsWorker]);
-  // useEffect(() => {
 
-  // }, []);
   useLayoutEffect(() => {
     let rafId, timeCurrent, timeDelta;
     // const f = async () => {
@@ -55,6 +53,9 @@ export default function useTfjsWorkerHook() {
 
           timePrevious = timeCurrent - (timeDelta % drawWaitTime);
         }
+        // else {
+        //   cancelAnimationFrame(rafId);
+        // }
       }
     }
     rafId = requestAnimationFrame(renderFrames);

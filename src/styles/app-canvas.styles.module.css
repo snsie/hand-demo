@@ -1,12 +1,12 @@
 .appCanvas {
   position: fixed;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   left: 0;
-  top: 330px;
+  /* top: 330px; */
   /* z-index: 1000; */
   border: none;
-  pointer-events: none;
+  /* pointer-events: none; */
 }
 /* .appCanvas:focus {
   outline: none;
