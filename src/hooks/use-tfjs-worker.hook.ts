@@ -5,6 +5,8 @@ import WebcamStream from '@/webcam/webcam';
 // import webcamDraw from '@/webcam/webcam-draw';
 import { drawWaitTime } from '@/webcam/webcam-params';
 export default function useTfjsWorkerHook() {
+  const quaternionRef = useRef([0, 0, 0, 1]);
+
   const tfjsWorker = useMemo(createTfjsWorker, []);
   const tfjsWorkerRef = useRef<Worker>(tfjsWorker);
   const webcamRef = useRef<WebcamStream>();
@@ -13,6 +15,10 @@ export default function useTfjsWorkerHook() {
     tfjsWorkerRef.current = tfjsWorker;
 
     tfjsWorker.onmessage = (e) => {
+      if (e.data.wristQuat) {
+        quaternionRef.current = e.data.wristQuat;
+      } // console.log(e.data.wristQuat);
+      // console.log(wristQuaternionRef.current);
       // console.log(e.data.wristVec);
     };
     const cleanup = () => {
@@ -68,7 +74,7 @@ export default function useTfjsWorkerHook() {
     };
     // handTask(tfjsWorkerRef.current);
   }, []);
-  return null;
+  return quaternionRef;
 }
 // worker.postMessage(
 //   {

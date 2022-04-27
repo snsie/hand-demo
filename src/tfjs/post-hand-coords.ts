@@ -6,6 +6,7 @@ const quaternion1 = new ThreejsQuaternion();
 const vector1 = new ThreejsVector3();
 const vector2 = new ThreejsVector3();
 const vector3 = new ThreejsVector3();
+const vectorOrigin = new ThreejsVector3(0, 0, -1);
 // function vectorMagnitude(x, y, z) {
 //   return Math.sqrt(x * x + y * y + z * z);
 // }
@@ -21,27 +22,43 @@ const vector3 = new ThreejsVector3();
 export default function postHandCoords(hands: any) {
   const keypointsArray2d: number[] = [];
   const keypointsArray3d: number[] = [];
-  const thumbVec = [
-    hands.keypoints3D[4].x - hands.keypoints3D[3].x,
-    hands.keypoints3D[4].y - hands.keypoints3D[3].y,
-    hands.keypoints3D[4].z - hands.keypoints3D[3].z,
-  ];
+  // const thumbVec = [
+  //   hands.keypoints3D[4].x - hands.keypoints3D[3].x,
+  //   hands.keypoints3D[4].y - hands.keypoints3D[3].y,
+  //   hands.keypoints3D[4].z - hands.keypoints3D[3].z,
+  // ];
   vector1
     .set(
-      hands.keypoints3D[0].x - hands.keypoints3D[9].x,
-      hands.keypoints3D[0].y - hands.keypoints3D[9].y,
-      hands.keypoints3D[0].z - hands.keypoints3D[9].z
+      hands.keypoints3D[17].x - hands.keypoints3D[0].x,
+      -(hands.keypoints3D[17].y - hands.keypoints3D[0].y),
+      hands.keypoints3D[17].z - hands.keypoints3D[0].z
     )
     .normalize();
+  // vector1.set(
+  //   hands.keypoints3D[5].x,
+  //   -hands.keypoints3D[5].y,
+  //   hands.keypoints3D[5].z
+  // );
+  // .normalize();
 
   vector2
     .set(
-      hands.keypoints3D[17].x - hands.keypoints3D[9].x,
-      hands.keypoints3D[17].y - hands.keypoints3D[9].y,
-      hands.keypoints3D[17].z - hands.keypoints3D[9].z
+      hands.keypoints3D[5].x - hands.keypoints3D[0].x,
+      -(hands.keypoints3D[5].y - hands.keypoints3D[0].y),
+      hands.keypoints3D[5].z - hands.keypoints3D[0].z
     )
     .normalize();
+  // console.log(hands);
+  // vector2
+  //   .set(
+  //     hands.keypoints3D[17].x,
+  //     -hands.keypoints3D[17].y,
+  //     hands.keypoints3D[17].z
+  //   )
+  //   .normalize();
   vector3.crossVectors(vector2, vector1).normalize();
+
+  quaternion1.setFromUnitVectors(vectorOrigin, vector3);
   // const wristVec = [
   //   hands.keypoints3D[9].x - hands.keypoints3D[0].x,
   //   hands.keypoints3D[9].y - hands.keypoints3D[0].y,
@@ -50,7 +67,7 @@ export default function postHandCoords(hands: any) {
   // console.log([-wristVec[0], -wristVec[1], -wristVec[2]]);
   // const wristUnitVec = unitVector(-wristVec[0], wristVec[1], wristVec[2]);
   // console.log([-wristUnitVec[0], -wristUnitVec[1], -wristUnitVec[2]]);
-  console.log(vector3.toArray());
+  // console.log(quaternion1.toArray());
   // console.log([
   //   wristUnitVec[0].toFixed(4),
   //   wristUnitVec[1].toFixed(4),
@@ -69,7 +86,7 @@ export default function postHandCoords(hands: any) {
   // const keypointsArray2dArray = new Float32Array(keypointsArray2d);
 
   postMessage({
-    wristVec: vector1.toArray(),
+    wristQuat: quaternion1.toArray(),
   });
   // postMessage(
   //   {

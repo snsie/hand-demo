@@ -1,4 +1,4 @@
-import { Suspense, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import '@/styles/app.css';
 
 // import ButtonAppBar from './components/app-bar';
@@ -11,14 +11,15 @@ import AppDom from './dom/app-dom';
 import useTfjsWorkerHook from '@/hooks/use-tfjs-worker.hook';
 
 const App = () => {
-  useTfjsWorkerHook();
+  // const quaternionRef = useRef([1, 0, 0, 0]);
+  const quaternionRef = useTfjsWorkerHook();
   return (
     <ThemeProvider theme={themeColors}>
       <div className="App">
         {Math.random()}
         {/* <ButtonAppBar taskCallback={setSelectedIndex} /> */}
         <AppDom />
-        <AppCanvas />
+        <AppCanvas wristQuaternionRef={quaternionRef} />
       </div>
     </ThemeProvider>
   );

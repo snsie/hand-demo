@@ -17,20 +17,50 @@ type GLTFResult = GLTF & {
     ['Material #46']: THREE.MeshStandardMaterial;
   };
 };
-
-export default function HandMesh({ ...props }: JSX.IntrinsicElements['group']) {
+const quaternionWrist = new THREE.Quaternion(0, 0, 0, 1);
+const quaternionWristConj = new THREE.Quaternion(0, 0, 0, 1);
+const baseQuaternionWrist = new THREE.Quaternion(0, 0, 0, 1);
+export default function HandMesh({ quaternionRef, ...props }) {
   const group = useRef<THREE.Group>(null!);
   const { nodes, materials } = useGLTF(
     '/gltf/hand_model_rigged.glb'
   ) as GLTFResult;
   useFrame(() => {
-    const thumb_mcp = nodes.hand.skeleton.getBoneByName('bone002');
-    const thumb_ip = nodes.hand.skeleton.getBoneByName('bone003');
+    // console.log(quaternionRef);
+    if (quaternionRef.current) {
+      const wrist = nodes.hand.skeleton.getBoneByName('bone000');
+      const thumb_mcp = nodes.hand.skeleton.getBoneByName('bone002');
+      const thumb_ip = nodes.hand.skeleton.getBoneByName('bone003');
 
-    if (thumb_mcp && thumb_ip) {
-      // thumb_mcp.rotation.y = Math.sin(performance.now() / 1000) / 2 + 0.5;
-      // console.log(thumb_mcp.position.y);
-      thumb_ip.rotation.x = Math.sin(performance.now() / 1000) / 2 + 1;
+      if (thumb_mcp && thumb_ip && wrist) {
+        // console.log(quaternionRef.current);
+        // quaternionWrist.set(
+        //   quaternionRef.current[0],
+        //   quaternionRef.current[1],
+        //   quaternionRef.current[2],
+        //   quaternionRef.current[3]
+        // );
+        // console.log(quaternionWrist.conjugate());
+        quaternionWrist.fromArray(quaternionRef.current);
+        // quaternionWristConj.copy(quaternionWrist.conjugate());
+
+        baseQuaternionWrist.copy(wrist.quaternion).premultiply(quaternionWrist);
+        // .multiply(quaternionWrist.conjugate());
+        // console.log(quaternionWrist);
+        // console.log(wrist.quaternion);
+        // wrist.applyQuaternion(quaternionWrist);
+        // wrist.quaternion.rotateTowards(baseQuaternionWrist, 0.05);
+
+        // console.log(wrist.quaternion.conjugate());
+        // wrist.quaternion.multiply(quaternionWrist);
+
+        // .multiply(quaternionWrist.conjugate());
+
+        // wrist.rotation.setFromQuaternion(quaternionWrist);
+        // thumb_mcp.rotation.y = Math.sin(performance.now() / 1000) / 2 + 0.5;
+        // console.log(wrist.rotation.toArray());
+        // thumb_ip.rotation.x = Math.sin(performance.now() / 1000) / 2 + 1;
+      }
     }
   });
   return (

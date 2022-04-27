@@ -1,7 +1,5 @@
 //from: https://github.com/tensorflow/tfjs-models/tree/master/hand-pose-detection/demos/live_video
 
-import { videoConfig } from './webcam-params';
-
 /**
  * @license
  * Copyright 2021 Google LLC. All Rights Reserved.
@@ -36,10 +34,6 @@ function processFrame(imageBitmap, canvas) {
   canvas.height = imageBitmap.height;
   canvas.getContext('2d').drawImage(imageBitmap, 0, 0);
 }
-/**
- * Initiate a Camera instance and wait for the camera stream to be ready.
- * @param cameraParam From app `STATE.camera`.
- */
 
 export default class Webcam {
   video;
@@ -65,12 +59,6 @@ export default class Webcam {
       this.canvas.width,
       this.canvas.height
     );
-    // const stream = this.video.captureStream();
-    // this.video.requestVideoFrameCallback();
-    // var track = this.video.srcObject.getVideoTracks()[0];
-
-    // track.applyConstraints(videoConfig).catch((e) => console.log(e));
-    // console.log(stream);
 
     this.clearCtx();
     return pixels;

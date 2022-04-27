@@ -5,7 +5,7 @@ import HandMesh from './objects/hand/hand.mesh';
 import { Environment, OrbitControls } from '@react-three/drei';
 import { Suspense } from 'react';
 
-export default function AppCanvas(props) {
+export default function AppCanvas({ wristQuaternionRef, ...props }) {
   // This reference gives us direct access to the THREE.Mesh object
   return (
     <Canvas className={styles.appCanvas}>
@@ -13,7 +13,7 @@ export default function AppCanvas(props) {
       <pointLight position={[10, 10, 10]} />
       <BoxAnimatedMesh position={[0, 0, -3]} />
       <Suspense fallback={null}>
-        <HandMesh />
+        <HandMesh quaternionRef={wristQuaternionRef} />
         <Environment preset="warehouse" />
       </Suspense>
       <OrbitControls />

@@ -1,23 +1,14 @@
 import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
 import * as handPoseDetection from '@tensorflow-models/hand-pose-detection';
-
-// import handTask from '@/tfjs/hand-tfjs';
-// import isMobile from '@/utils/is-mobile';
-// import {
-//   pixelBufferLength,
-//   imageWidth,
-//   imageLength,
-// } from '@/webcam/webcam-params';
 import postHandCoords from '../tfjs/post-hand-coords';
 const model = handPoseDetection.SupportedModels.MediaPipeHands;
 const detectorConfig = {
   runtime: 'tfjs' as 'tfjs',
-  STATIC_IMAGE_MODE: true,
+  // STATIC_IMAGE_MODE: true,
 };
 let detector;
 handPoseDetection.createDetector(model, detectorConfig).then((val) => {
-  console.log('ready');
   return (detector = val);
 });
 // const estimationConfig = { flipHorizontal: false };
@@ -25,13 +16,7 @@ handPoseDetection.createDetector(model, detectorConfig).then((val) => {
 //   const stream = await navigator.mediaDevices.getUserMedia(videoConfig);
 //   return stream;
 // }
-// const pixelArray = new Uint8ClampedArray(pixelBufferLength);
-// const imageData = new ImageData(pixelArray, imageWidth, imageLength);
-// const imageData = new ImageData(
-//   new Uint8ClampedArray(e.data.pixels),
-//   imageWidth,
-//   imageLength
-// );
+
 onmessage = async function (e) {
   // handTask();
   // console.log(e.data);
