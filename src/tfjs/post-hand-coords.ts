@@ -1,6 +1,6 @@
 import { numKeypoints } from './tfjs-params';
 import ThreejsQuaternion from '../utils/threejs/threejs.quaternion';
-import ThreejsVector3 from '@/utils/threejs/threejs.vector3';
+import ThreejsVector3 from '../utils/threejs/threejs.vector3';
 const quaternion1 = new ThreejsQuaternion();
 // const quaternion2 = new ThreejsQuaternion();
 const vector1 = new ThreejsVector3();
@@ -27,6 +27,7 @@ export default function postHandCoords(hands: any) {
   //   hands.keypoints3D[4].y - hands.keypoints3D[3].y,
   //   hands.keypoints3D[4].z - hands.keypoints3D[3].z,
   // ];
+
   vector1
     .set(
       hands.keypoints3D[17].x - hands.keypoints3D[0].x,
@@ -73,21 +74,29 @@ export default function postHandCoords(hands: any) {
   //   wristUnitVec[1].toFixed(4),
   //   wristUnitVec[2].toFixed(4),
   // ]);
-  // for (let i = 0; i < numKeypoints; i++) {
-  //   keypointsArray2d.push(hands.keypoints[i].x, hands.keypoints[i].y);
-  //   keypointsArray3d.push(
-  //     hands.keypoints3D[i].x,
-  //     hands.keypoints3D[i].y,
-  //     hands.keypoints3D[i].z
-  //   );
-  // }
+  // const keypoints = hands.keypoints3D;
+  // keypoints.map((keypoint) => [-keypoint.x, -keypoint.y, -keypoint.z]);
+  // console.log(keypoints);
+  const scaleMag = 30;
+  for (let i = 0; i < numKeypoints; i++) {
+    keypointsArray2d.push(hands.keypoints[i].x, hands.keypoints[i].y);
+    keypointsArray3d.push(
+      scaleMag * -hands.keypoints3D[i].x,
+      scaleMag * -hands.keypoints3D[i].y,
+      scaleMag * -hands.keypoints3D[i].z
+    );
+  }
 
-  // const keypointsArray3dArray = new Float32Array(keypointsArray3d);
+  const keypointsArray3dArray = new Float32Array(keypointsArray3d);
   // const keypointsArray2dArray = new Float32Array(keypointsArray2d);
 
-  postMessage({
-    wristQuat: quaternion1.toArray(),
-  });
+  postMessage(
+    {
+      keypoints3d: keypointsArray3dArray,
+      wristQuat: quaternion1.toArray(),
+    },
+    [keypointsArray3dArray.buffer]
+  );
   // postMessage(
   //   {
   //     wristVec: wristUnitVec,

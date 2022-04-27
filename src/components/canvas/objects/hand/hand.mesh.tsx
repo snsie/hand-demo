@@ -23,7 +23,7 @@ const baseQuaternionWrist = new THREE.Quaternion(0, 0, 0, 1);
 export default function HandMesh({ quaternionRef, ...props }) {
   const group = useRef<THREE.Group>(null!);
   const { nodes, materials } = useGLTF(
-    '/gltf/hand_model_rigged.glb'
+    '/gltf/hand_model_parented_sub.glb'
   ) as GLTFResult;
   useFrame(() => {
     // console.log(quaternionRef);
@@ -75,4 +75,4 @@ export default function HandMesh({ quaternionRef, ...props }) {
   );
 }
 
-useGLTF.preload('/gltf/hand_model_rigged.glb');
+useGLTF.preload('/gltf/hand_model_parented_sub.glb');

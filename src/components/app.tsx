@@ -9,17 +9,22 @@ import themeColors from '@/utils/theme-colors';
 import AppCanvas from '@/components/canvas/app-canvas';
 import AppDom from './dom/app-dom';
 import useTfjsWorkerHook from '@/hooks/use-tfjs-worker.hook';
+import useMediapipeHook from '@/hooks/use-mediapipe.hook';
 
 const App = () => {
   // const quaternionRef = useRef([1, 0, 0, 0]);
-  const quaternionRef = useTfjsWorkerHook();
+  useMediapipeHook();
+  const [quaternionRef, keypointsRef] = useTfjsWorkerHook();
   return (
     <ThemeProvider theme={themeColors}>
       <div className="App">
-        {Math.random()}
+        {/* {Math.random()} */}
         {/* <ButtonAppBar taskCallback={setSelectedIndex} /> */}
         <AppDom />
-        <AppCanvas wristQuaternionRef={quaternionRef} />
+        <AppCanvas
+          wristQuaternionRef={quaternionRef}
+          keypoints3dRef={keypointsRef}
+        />
       </div>
     </ThemeProvider>
   );
