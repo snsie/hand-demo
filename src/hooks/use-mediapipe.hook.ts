@@ -5,33 +5,47 @@ import WebcamStream from '@/webcam/webcam';
 // import webcamDraw from '@/webcam/webcam-draw';
 import { drawWaitTime } from '@/webcam/webcam-params';
 import { numKeypoints3d } from '@/tfjs/tfjs-params';
-import * as tf from '@tensorflow/tfjs-core';
-import '@tensorflow/tfjs-backend-webgl';
-import * as handPoseDetection from '@tensorflow-models/hand-pose-detection';
-import postHandCoords from '../tfjs/post-hand-coords';
-import * as mpHands from '@mediapipe/hands';
-import * as tfjsWasm from '@tensorflow/tfjs-backend-wasm';
 
+// import * as handPoseDetection from '@tensorflow-models/hand-pose-detection';
+// import postHandCoords from '../tfjs/post-hand-coords';
+import * as mpHands from '@mediapipe/hands';
+// import * as tfjsWasm from '@tensorflow/tfjs-backend-wasm';
+import onResults from '@/webcam/on-results';
 // const test = new Float32Array(numKeypoints3d);
+const config = {
+  locateFile: (file: string) => {
+    // console.log(
+    //   `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/${file}`
+    // );
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/${file}`;
+  },
+};
 export default function useMediapipeHook() {
-  const model = handPoseDetection.SupportedModels.MediaPipeHands;
+  // const model = handPoseDetection.SupportedModels.MediaPipeHands;
   const detectorConfig = {
     runtime: 'mediapipe' as 'mediapipe',
     type: 'full' as 'full',
     maxHands: 1,
     // STATIC_IMAGE_MODE: true,
   };
+  const hands = useMemo(() => {
+    const hands = new mpHands.Hands(config);
+    hands.setOptions({
+      maxNumHands: 2,
+      modelComplexity: 1,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5,
+    });
+    hands.onResults(onResults);
+    return hands;
+  }, []);
 
-  tfjsWasm.setWasmPaths(
-    `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@${tfjsWasm.version_wasm}/dist/`
-  );
-  console.log(mpHands.VERSION);
-  handPoseDetection.createDetector(model, {
-    runtime: detectorConfig.runtime,
-    modelType: detectorConfig.type,
-    maxHands: detectorConfig.maxHands,
-    solutionPath: `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915`,
-  }); // handPoseDetection.createDetector(model, {
+  // handPoseDetection.createDetector(model, {
+  //   runtime: detectorConfig.runtime,
+  //   modelType: detectorConfig.type,
+  //   maxHands: detectorConfig.maxHands,
+  //   solutionPath: `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915`,
+  // }); // handPoseDetection.createDetector(model, {
   //   runtime: detectorConfig.runtime,
   //   modelType: detectorConfig.type,
   //   maxHands: detectorConfig.maxHands,
@@ -39,28 +53,30 @@ export default function useMediapipeHook() {
   // });
   const quaternionRef = useRef([0, 0, 0, 1]);
   const keypointsRef = useRef(new Float32Array(numKeypoints3d));
-  const tfjsWorker = useMemo(createTfjsWorker, []);
-  const tfjsWorkerRef = useRef<Worker>(tfjsWorker);
+  // const tfjsWorker = useMemo(createTfjsWorker, []);
+  // const tfjsWorkerRef = useRef<Worker>(tfjsWorker);
   const webcamRef = useRef<WebcamStream>();
-
   useEffect(() => {
-    tfjsWorkerRef.current = tfjsWorker;
-
-    tfjsWorker.onmessage = (e) => {
-      if (e.data.wristQuat) {
-        keypointsRef.current = e.data.keypoints3d;
-        quaternionRef.current = e.data.wristQuat;
-        // console.log(keypointsRef.current);
-      } // console.log(e.data.wristQuat);
-      // console.log(wristQuaternionRef.current);
-      // console.log(e.data.wristVec);
+    let rafId;
+    webcamSetup().then((val) => (webcamRef.current = val));
+    async function renderVideo() {
+      if (webcamRef.current) {
+        webcamRef.current.drawCtx();
+        await hands.send({ image: webcamRef.current.video });
+      }
+      rafId = requestAnimationFrame(renderVideo);
+    }
+    rafId = requestAnimationFrame(renderVideo);
+    const cleanupWebCam = () => {
+      cancelAnimationFrame(rafId);
     };
-    const cleanup = () => {
-      tfjsWorker.terminate();
-    };
-    return cleanup;
-  }, [tfjsWorker]);
 
+    // console.log(hands);
+
+    return () => {
+      cleanupWebCam();
+    };
+  }, []);
   return [quaternionRef, keypointsRef];
 }
 // worker.postMessage(

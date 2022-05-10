@@ -51,15 +51,15 @@ export default function useTfjsWorkerHook() {
           const pixels = webcamRef.current.drawCtx();
           // const pixels = await webcamDraw(webcamRef.current);
           // console.log('hit')
-          tfjsWorkerRef.current.postMessage(
-            {
-              pixels: pixels.data.buffer,
-              width: webcamRef.current.canvas.width,
-              height: webcamRef.current.canvas.height,
-              channels: 4,
-            },
-            [pixels.data.buffer]
-          );
+          // tfjsWorkerRef.current.postMessage(
+          //   {
+          //     pixels: pixels.data.buffer,
+          //     width: webcamRef.current.canvas.width,
+          //     height: webcamRef.current.canvas.height,
+          //     channels: 4,
+          //   },
+          //   [pixels.data.buffer]
+          // );
 
           timePrevious = timeCurrent - (timeDelta % drawWaitTime);
         }

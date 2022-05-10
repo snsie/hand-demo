@@ -7,14 +7,14 @@ export default function HandTask() {
       <div className="Spacing-div" />
       <div className="Hand-div">
         <div className="container">
-          <div className="canvas-wrapper" id="canvas-wrapper" hidden>
-            <canvas id="output" hidden></canvas>
-            <video className="Hand-video" id="video" playsInline hidden></video>
+          <div className="canvas-wrapper" id="canvas-wrapper">
+            <canvas id="output"></canvas>
+            <video className="Hand-video" id="video"></video>
           </div>
-          <div id="scatter-gl-container-left"></div>
+          {/* <div id="scatter-gl-container-left"></div> */}
         </div>
 
-        <div id="scatter-gl-container-right"></div>
+        {/* <div id="scatter-gl-container-right"></div> */}
         {/* <video id="video" className="Hidden-video" playsInline></video> */}
       </div>
       <div className="Spacing-div" />

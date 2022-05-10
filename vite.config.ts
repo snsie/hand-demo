@@ -13,11 +13,6 @@ export default defineConfig({
     },
   },
 });
-// {
-//   ...mediapipe_workaround(),
-//   enforce: 'post',
-//   apply: 'build',
-// },
 
 function mediapipe_workaround() {
   return {

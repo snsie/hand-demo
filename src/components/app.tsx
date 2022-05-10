@@ -8,23 +8,24 @@ import { ThemeProvider } from '@mui/material/styles';
 import themeColors from '@/utils/theme-colors';
 import AppCanvas from '@/components/canvas/app-canvas';
 import AppDom from './dom/app-dom';
-import useTfjsWorkerHook from '@/hooks/use-tfjs-worker.hook';
+// import useTfjsWorkerHook from '@/hooks/use-tfjs-worker.hook';
 import useMediapipeHook from '@/hooks/use-mediapipe.hook';
-
+import testSupport from '@/utils/test-support';
 const App = () => {
+  testSupport([{ client: 'Chrome' }]);
   // const quaternionRef = useRef([1, 0, 0, 0]);
-  useMediapipeHook();
-  const [quaternionRef, keypointsRef] = useTfjsWorkerHook();
+  const [quaternionRef, keypointsRef] = useMediapipeHook();
+  // const [quaternionRef, keypointsRef] = useTfjsWorkerHook();
   return (
     <ThemeProvider theme={themeColors}>
       <div className="App">
         {/* {Math.random()} */}
         {/* <ButtonAppBar taskCallback={setSelectedIndex} /> */}
         <AppDom />
-        <AppCanvas
+        {/* <AppCanvas
           wristQuaternionRef={quaternionRef}
           keypoints3dRef={keypointsRef}
-        />
+        /> */}
       </div>
     </ThemeProvider>
   );

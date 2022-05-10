@@ -29,11 +29,11 @@ const fingerLookupIndices = {
   pinky: [0, 17, 18, 19, 20],
 }; // for rendering each finger as a polyline
 
-function processFrame(imageBitmap, canvas) {
-  canvas.width = imageBitmap.width;
-  canvas.height = imageBitmap.height;
-  canvas.getContext('2d').drawImage(imageBitmap, 0, 0);
-}
+// function processFrame(imageBitmap, canvas) {
+//   canvas.width = imageBitmap.width;
+//   canvas.height = imageBitmap.height;
+//   canvas.getContext('2d').drawImage(imageBitmap, 0, 0);
+// }
 
 export default class Webcam {
   video;
@@ -53,15 +53,15 @@ export default class Webcam {
       this.video.videoWidth,
       this.video.videoHeight
     );
-    const pixels = this.ctx.getImageData(
-      0,
-      0,
-      this.canvas.width,
-      this.canvas.height
-    );
-
-    this.clearCtx();
-    return pixels;
+    // const pixels = this.ctx.getImageData(
+    //   0,
+    //   0,
+    //   this.canvas.width,
+    //   this.canvas.height
+    // );
+    // this.ctx.scale(-1, 1);
+    // this.clearCtx();
+    // return pixels;
   }
 
   clearCtx() {
