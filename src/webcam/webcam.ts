@@ -53,6 +53,9 @@ export default class Webcam {
       this.video.videoWidth,
       this.video.videoHeight
     );
+
+    // this.clearCtx();
+    // this.ctx.save();
     // const pixels = this.ctx.getImageData(
     //   0,
     //   0,
@@ -60,7 +63,6 @@ export default class Webcam {
     //   this.canvas.height
     // );
     // this.ctx.scale(-1, 1);
-    // this.clearCtx();
     // return pixels;
   }
 

@@ -7,6 +7,7 @@ import React, { useRef } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { GLTF } from 'three-stdlib';
 import { useFrame } from '@react-three/fiber';
+import { imageHeight, imageWidth } from '@/webcam/webcam-params';
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -17,22 +18,26 @@ type GLTFResult = GLTF & {
     ['Material #46']: THREE.MeshStandardMaterial;
   };
 };
+const scaleMag = 7;
 const quaternionWrist = new THREE.Quaternion(0, 0, 0, 1);
 const quaternionWristConj = new THREE.Quaternion(0, 0, 0, 1);
 const baseQuaternionWrist = new THREE.Quaternion(0, 0, 0, 1);
-export default function HandMesh({ quaternionRef, ...props }) {
+const wristPosition = new THREE.Vector3();
+export default function HandMesh({ quaternionRef, keypoints3dRef, ...props }) {
   const group = useRef<THREE.Group>(null!);
   const { nodes, materials } = useGLTF(
     '/gltf/hand_model_parented_sub.glb'
   ) as GLTFResult;
-  useFrame(() => {
+  const wrist = nodes.hand.skeleton.getBoneByName('bone000');
+  const thumb_mcp = nodes.hand.skeleton.getBoneByName('bone002');
+  const thumb_ip = nodes.hand.skeleton.getBoneByName('bone003');
+  const index_finger_pip = nodes.hand.skeleton.getBoneByName('bone006');
+  useFrame(({ clock, viewport }) => {
     // console.log(quaternionRef);
     if (quaternionRef.current) {
-      const wrist = nodes.hand.skeleton.getBoneByName('bone000');
-      const thumb_mcp = nodes.hand.skeleton.getBoneByName('bone002');
-      const thumb_ip = nodes.hand.skeleton.getBoneByName('bone003');
+      if (thumb_mcp && thumb_ip && wrist && index_finger_pip) {
+        // console.log(wrist.quaternion);
 
-      if (thumb_mcp && thumb_ip && wrist) {
         // console.log(quaternionRef.current);
         // quaternionWrist.set(
         //   quaternionRef.current[0],
@@ -41,10 +46,12 @@ export default function HandMesh({ quaternionRef, ...props }) {
         //   quaternionRef.current[3]
         // );
         // console.log(quaternionWrist.conjugate());
-        quaternionWrist.fromArray(quaternionRef.current);
+
+        // quaternionWrist.fromArray(quaternionRef.current);
+
         // quaternionWristConj.copy(quaternionWrist.conjugate());
 
-        baseQuaternionWrist.copy(wrist.quaternion).premultiply(quaternionWrist);
+        // baseQuaternionWrist.copy(wrist.quaternion).multiply(quaternionWrist);
         // .multiply(quaternionWrist.conjugate());
         // console.log(quaternionWrist);
         // console.log(wrist.quaternion);
@@ -55,8 +62,34 @@ export default function HandMesh({ quaternionRef, ...props }) {
         // wrist.quaternion.multiply(quaternionWrist);
 
         // .multiply(quaternionWrist.conjugate());
+        // console.log(wrist.position);
+        // console.log(
+        //   keypoints3dRef.current[0],
+        //   keypoints3dRef.current[1],
+        //   keypoints3dRef.current[2]
+        // );
+        const time = clock.getElapsedTime();
+        // console.log(keypoints3dRef.current[1] + 0.7);
+        wristPosition.set(
+          viewport.width * keypoints3dRef.current[17 * 3],
+          viewport.height * keypoints3dRef.current[17 * 3 + 1],
+          0
+        );
 
+        // console.log(viewport.width, viewport.height);
+        // wristPosition.set(-viewport.width / 2, -viewport.height / 2, 0);
+        // console.log(wrist.quaternion.toArray());
+        wrist.position.lerp(wristPosition, 0.4);
         // wrist.rotation.setFromQuaternion(quaternionWrist);
+        // wrist.rotation.set(0, -Math.PI / 2, 0);
+        // wrist.rotation.fromArray(quaternionRef.current);
+        wrist.rotation.y = (Math.PI / 2) * (-1.01 + quaternionRef.current[2]);
+        // console.log(wrist.rotation.toArray());
+
+        // wrist.rotation.x += 0.05;
+        // index_finger_pip.rotation.y += Math.sin(time);
+
+        // wrist.rotation.setFromQuaternion(baseQuaternionWrist);
         // thumb_mcp.rotation.y = Math.sin(performance.now() / 1000) / 2 + 0.5;
         // console.log(wrist.rotation.toArray());
         // thumb_ip.rotation.x = Math.sin(performance.now() / 1000) / 2 + 1;

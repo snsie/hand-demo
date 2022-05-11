@@ -1,0 +1,52 @@
+.canvasWrapper {
+  position: relative;
+  /* display: none; */
+}
+/* #scatter-gl-container-left,
+#scatter-gl-container-right {
+  position: relative;
+  float: left;
+} */
+
+.handVideo {
+  /* transform: scale(-1, 1);
+  -webkit-transform: scale(-1, 1); */
+  /* transform: scaleX(-1); */
+  /* transform: scale(-1, 1); */
+  /* width: auto;
+  height: auto; */
+  /* display: flex; */
+  /* position: absolute; */
+  /* left: 0; */
+  /* position: absolute; */
+  display: none;
+  visibility: hidden;
+}
+
+.output {
+  position: absolute;
+  /* top: 0;
+    left: 0;
+   */
+  left: 0;
+  top: 0;
+  /* bottom: 0; */
+}
+
+.taskDiv {
+  width: 100%;
+  flex-grow: 1;
+  /* position: relative; */
+  display: flex;
+  justify-content: center;
+  /* top: 25px; */
+
+  /* align-items: center; */
+  /* left: 20px; */
+}
+/* .Spacing-div {
+  width: 100%;
+  display: flex;
+  align-content: center;
+  left: 20px;
+} */

@@ -17,6 +17,7 @@ export default async function webcamSetup() {
       resolve(video);
     };
   });
+  webcam.video.style.transform = 'scale(-1, 1)';
   webcam.video.play();
 
   //  const track =  webcam.video.srcObject.getVideoTracks()[0];
@@ -32,8 +33,8 @@ export default async function webcamSetup() {
 
   webcam.canvas.width = videoWidth;
   webcam.canvas.height = videoHeight;
-  const canvasContainer = document.querySelector(
-    '.canvas-wrapper'
+  const canvasContainer = document.getElementById(
+    'canvasWrapper'
   ) as HTMLElement;
   canvasContainer.setAttribute(
     'style',

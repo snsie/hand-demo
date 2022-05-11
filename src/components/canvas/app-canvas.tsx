@@ -20,10 +20,13 @@ export default function AppCanvas({
       <HandSkeletonMesh keypoints3dRef={keypoints3dRef} />
 
       <Suspense fallback={null}>
-        {/* <HandMesh quaternionRef={wristQuaternionRef} /> */}
+        <HandMesh
+          quaternionRef={wristQuaternionRef}
+          keypoints3dRef={keypoints3dRef}
+        />
         <Environment preset="warehouse" />
       </Suspense>
-      <OrbitControls />
+      {/* <OrbitControls /> */}
     </Canvas>
   );
 }

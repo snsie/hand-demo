@@ -22,10 +22,10 @@ const App = () => {
         {/* {Math.random()} */}
         {/* <ButtonAppBar taskCallback={setSelectedIndex} /> */}
         <AppDom />
-        {/* <AppCanvas
+        <AppCanvas
           wristQuaternionRef={quaternionRef}
           keypoints3dRef={keypointsRef}
-        /> */}
+        />
       </div>
     </ThemeProvider>
   );
