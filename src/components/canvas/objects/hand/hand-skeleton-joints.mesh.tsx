@@ -3,13 +3,13 @@ import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 import * as THREE from 'three';
 
-export default function HandSkeletonMesh({ keypoints3dRef, ...props }) {
+export default function HandSkeletonJoints({ keypoints3dRef, ...props }) {
   const pointsRef = useRef<THREE.Points>(null!);
   useFrame(() => {
     const positionsArray: any =
       pointsRef.current.geometry.attributes.position.array;
-    let x, y, z, index;
-    x = y = z = index = 0;
+    // let x, y, z, index;
+    // x = y = z = index = 0;
     for (let i = 0, l = positionsArray.length; i < l; i++) {
       positionsArray[i] = keypoints3dRef.current[i];
       //   positionsArray[i] = y;
@@ -22,7 +22,7 @@ export default function HandSkeletonMesh({ keypoints3dRef, ...props }) {
     // ).attributes.position.array = keypoints3dRef.current;
   });
   return (
-    <group>
+    <group scale={14}>
       <points ref={pointsRef}>
         <pointsMaterial color="blue" size={0.1} />
         <bufferGeometry>

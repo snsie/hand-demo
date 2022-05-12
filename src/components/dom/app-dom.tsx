@@ -28,10 +28,10 @@ export default function AppDom() {
         introduction to python
       </h4>
       {/* <TaskTitle titleIndex={selectedIndex} /> */}
+      <h3>Display your hands to your webcam!</h3>
       <Suspense fallback={<WaitSpinner />}>
         <HandTask />
       </Suspense>
-      <h3>Display your hands to your webcam!</h3>
       {/* <h3>Gamification Coming Soon!</h3> */}
     </div>
   );

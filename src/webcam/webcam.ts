@@ -41,34 +41,34 @@ export default class Webcam {
   ctx;
   constructor() {
     this.video = document.getElementById('video');
-    this.canvas = document.getElementById('output');
-    this.ctx = this.canvas.getContext('2d');
+    // this.canvas = document.getElementById('output');
+    // this.ctx = this.canvas.getContext('2d');
   }
 
-  drawCtx() {
-    this.ctx.drawImage(
-      this.video,
-      0,
-      0,
-      this.video.videoWidth,
-      this.video.videoHeight
-    );
+  // drawCtx() {
+  //   this.ctx.drawImage(
+  //     this.video,
+  //     0,
+  //     0,
+  //     this.video.videoWidth,
+  //     this.video.videoHeight
+  //   );
 
-    // this.clearCtx();
-    // this.ctx.save();
-    // const pixels = this.ctx.getImageData(
-    //   0,
-    //   0,
-    //   this.canvas.width,
-    //   this.canvas.height
-    // );
-    // this.ctx.scale(-1, 1);
-    // return pixels;
-  }
+  //   // this.clearCtx();
+  //   // this.ctx.save();
+  //   // const pixels = this.ctx.getImageData(
+  //   //   0,
+  //   //   0,
+  //   //   this.canvas.width,
+  //   //   this.canvas.height
+  //   // );
+  //   // this.ctx.scale(-1, 1);
+  //   // return pixels;
+  // }
 
-  clearCtx() {
-    this.ctx.clearRect(0, 0, this.video.videoWidth, this.video.videoHeight);
-  }
+  // clearCtx() {
+  //   this.ctx.clearRect(0, 0, this.video.videoWidth, this.video.videoHeight);
+  // }
 }
 
 function doSomethingWithTheFrame() {

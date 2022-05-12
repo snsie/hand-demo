@@ -1,12 +1,8 @@
 .canvasWrapper {
   position: relative;
+  display: none;
   /* display: none; */
 }
-/* #scatter-gl-container-left,
-#scatter-gl-container-right {
-  position: relative;
-  float: left;
-} */
 
 .handVideo {
   /* transform: scale(-1, 1);
