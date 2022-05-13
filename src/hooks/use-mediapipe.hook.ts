@@ -18,7 +18,7 @@ const config = {
 const globalPosJoint = 0;
 const point2 = 17;
 const point3 = 2;
-const updateGamma = 0.3;
+const updateGamma = 0.25;
 
 export default function useMediapipeHook() {
   // const model = handPoseDetection.SupportedModels.MediaPipeHands;
