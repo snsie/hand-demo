@@ -49,11 +49,13 @@ export default function getQuatWrist(
 
   vecFrom.copy(getVecOrth(vecBonePos0, vecBonePos1, vecBonePos2));
   vecTo.copy(getVecOrth(vecTrackPos0, vecTrackPos1, vecTrackPos2));
+
   quatOrth.setFromUnitVectors(vecFrom, vecTo);
   vecFrom.subVectors(vecBonePos2, vecBonePos1).normalize();
   vecTo.subVectors(vecTrackPos2, vecTrackPos1).normalize();
-  quatLat.setFromUnitVectors(vecFrom, vecTo);
-  return quatFinal.premultiply(quatOrth).premultiply(quatLat);
+  quatLat.setFromUnitVectors(vecFrom, vecTo).premultiply(quatOrth);
+  return quatFinal.premultiply(quatLat);
+  // .premultiply(quatLat);
   // vecFrom.copy(getVecOrth(vecBonePos0, vecBonePos1, vecBonePos2));
   // vecTo.copy(getVecOrth(vecTrackPos0, vecTrackPos1, vecTrackPos2));
 }

@@ -21,9 +21,10 @@ type GLTFResult = GLTF & {
     ['Material #46']: THREE.MeshStandardMaterial;
   };
 };
-const quaternionWrist = new THREE.Quaternion(0, 0, 0, 1);
+const quaternionWrist = new THREE.Quaternion();
 // const quatWristSmoothed = new THREE.Quaternion(0, 0, 0, 1);
-const baseQuaternionWrist = new THREE.Quaternion(0, 0, 0, 1);
+const quatWristBase = new THREE.Quaternion();
+const baseQuatIndexMcp = new THREE.Quaternion();
 const wristPosition = new THREE.Vector3();
 
 const quaternion1 = new THREE.Quaternion();
@@ -32,10 +33,13 @@ const quatFinal = new THREE.Quaternion();
 // const quaternionWrist = new THREE.Quaternion();
 // const quaternion2 = new ThreejsQuaternion();
 const vectorBone = new THREE.Vector3();
-const vectorBonePos0 = new THREE.Vector3();
-const vectorBonePos1 = new THREE.Vector3();
-// const vectorBone1 = new THREE.Vector3();
+const vecBonePos0 = new THREE.Vector3();
+const vecBonePos1 = new THREE.Vector3();
+const vecBonePos2 = new THREE.Vector3();
 const vectorTrack = new THREE.Vector3();
+const vecFrom = new THREE.Vector3();
+const vecTo = new THREE.Vector3();
+
 // const vectorTrack1 = new THREE.Vector3();
 
 function addZeros(num, totalLength) {
@@ -72,13 +76,15 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
     `${addZeros(8, 3)}`
   ) as THREE.Bone;
   useEffect(() => {
-    baseQuaternionWrist.copy(wrist.quaternion);
+    quaternionWrist.copy(wrist.quaternion);
+    baseQuatIndexMcp.copy(indexMcp.quaternion).invert();
   }, []);
 
   const { clock, viewport } = useThree();
   const prevVectorRef = useRef([0, 0, 1]);
 
   useFrame(() => {
+    // quaternionWrist.copy(wrist.quaternion);
     wristPosition.set(
       viewport.width * basePosRef.current[0],
       viewport.height * basePosRef.current[1],
@@ -86,7 +92,7 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
     );
     // quaternionWrist.copy(
     getQuatWrist(
-      quaternionWrist,
+      wrist.quaternion,
       nodes.hand.skeleton,
       keypoints3dRef.current,
       0,
@@ -96,13 +102,16 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
     // );
 
     wrist.position.lerp(wristPosition, 0.4);
-    wrist.quaternion.slerp(quaternionWrist, 0.75);
+    // wrist.quaternion.copy(quaternionWrist);
+
+    // wrist.quaternion.slerp(quaternionWrist, 0.75);
     // wrist.applyQuaternion(quaternionWrist);
 
-    indexMcp.getWorldPosition(vectorBonePos0);
-    indexPip.getWorldPosition(vectorBonePos1);
+    indexMcp.getWorldPosition(vecBonePos0);
+    indexPip.getWorldPosition(vecBonePos1);
+    midMcp.getWorldPosition(vecBonePos2);
     // pointMidMcp
-    vectorBone.subVectors(vectorBonePos1, vectorBonePos0).normalize();
+    vectorBone.subVectors(vecBonePos1, vecBonePos0).normalize();
     vectorTrack
       .set(
         keypoints3dRef.current[pointIndexPip * 3 + 0] -
@@ -113,9 +122,35 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
           keypoints3dRef.current[pointIndexMcp * 3 + 2]
       )
       .normalize();
-    quaternion1
-      .setFromUnitVectors(vectorBone, vectorTrack)
-      .premultiply(quaternionWrist);
+    // console.log(vectorTrack);
+    // vecFrom.copy(getVecOrth(vecBonePos0, vecBonePos1, vecBonePos2));
+    // vecBonePos0.set(
+    //   keypoints3dRef.current[pointIndexMcp * 3 + 0],
+    //   keypoints3dRef.current[pointIndexMcp * 3 + 1],
+    //   keypoints3dRef.current[pointIndexMcp * 3 + 2]
+    // );
+    // vecBonePos1.set(
+    //   keypoints3dRef.current[pointIndexPip * 3 + 0],
+    //   keypoints3dRef.current[pointIndexPip * 3 + 1],
+    //   keypoints3dRef.current[pointIndexPip * 3 + 2]
+    // );
+    // vecBonePos2.set(
+    //   keypoints3dRef.current[pointMidMcp * 3 + 0],
+    //   keypoints3dRef.current[pointMidMcp * 3 + 1],
+    //   keypoints3dRef.current[pointMidMcp * 3 + 2]
+    // );
+    // vecTo.copy(getVecOrth(vecBonePos0, vecBonePos1, vecBonePos2));
+
+    // vecTo;
+    // quaternion1.setFromUnitVectors(vectorBone, vectorTrack);
+    // // .multiply(baseQuatIndexMcp);
+    // // .multiply(quaternionWrist);
+
+    // indexMcp.quaternion.copy(quaternion1);
+    //   quaternion1.premultiply(quaternionWrist).multiply(baseQuatIndexMcp),
+    //   0.75
+    // );
+    //   .premultiply(quaternionWrist);
 
     // quaternion2.copy(wrist.quaternion);
     // getQuatWrist(
@@ -128,7 +163,8 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
     // );
     // quaternion2.multiplyQuaternions(quaternionWrist, quaternion1);
     // console.log(indexMcp.quaternion);
-    indexMcp.quaternion.slerp(quaternion1, 0.75);
+    // indexMcp.quaternion.slerp(quaternion1, 0.75);
+    // console.log(baseQuatIndexMcp);
     // quaternion2.copy(indexMcp.quaternion);
     // quaternion1
     //   .copy(getQuatWrist(nodes.hand.skeleton, keypoints3dRef.current, 5, 6, 9))
@@ -138,7 +174,7 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
     //   .setFromUnitVectors(vectorBone, vectorTrack)
     //   .premultiply(quaternionWrist);
     // // quatFinal
-    // midMcp.getWorldPosition(vectorBonePos1);
+    // midMcp.getWorldPosition(vecBonePos1);
 
     // quaternion2.premultiply(quaternion1).premultiply(quaternionWrist);
 
