@@ -8,9 +8,10 @@ const vecTrackPos1 = new THREE.Vector3();
 const vecTrackPos2 = new THREE.Vector3();
 const vecFrom = new THREE.Vector3();
 const vecTo = new THREE.Vector3();
+
 const quatOrth = new THREE.Quaternion();
 const quatLat = new THREE.Quaternion();
-
+// const quatComp = new THREE.Quaternion();
 // const quatFinal = new THREE.Quaternion();
 function addZeros(num, totalLength) {
   return `bone${String(num).padStart(totalLength, '0')}`;
@@ -49,12 +50,17 @@ export default function getQuatWrist(
 
   vecFrom.copy(getVecOrth(vecBonePos0, vecBonePos1, vecBonePos2));
   vecTo.copy(getVecOrth(vecTrackPos0, vecTrackPos1, vecTrackPos2));
-
+  // vecFrom.subVectors(vecBonePos1, vecBonePos0).normalize();
+  // vecTo.subVectors(vecTrackPos1, vecTrackPos0).normalize();
   quatOrth.setFromUnitVectors(vecFrom, vecTo);
-  vecFrom.subVectors(vecBonePos2, vecBonePos1).normalize();
-  vecTo.subVectors(vecTrackPos2, vecTrackPos1).normalize();
+  vecFrom.subVectors(vecBonePos2, vecBonePos0).normalize();
+  vecTo.subVectors(vecTrackPos2, vecTrackPos0).normalize();
+  // vecFrom.applyQuaternion(quatOrth);
+  // vecTo.applyQuaternion(quatOrth);
+
   quatLat.setFromUnitVectors(vecFrom, vecTo).premultiply(quatOrth);
-  return quatFinal.premultiply(quatLat);
+  quatFinal.premultiply(quatLat);
+
   // .premultiply(quatLat);
   // vecFrom.copy(getVecOrth(vecBonePos0, vecBonePos1, vecBonePos2));
   // vecTo.copy(getVecOrth(vecTrackPos0, vecTrackPos1, vecTrackPos2));
