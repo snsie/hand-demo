@@ -4,37 +4,32 @@ import getBoneName from './get-bone-name';
 const quatWristInverted = new THREE.Quaternion();
 const quatMcpInverted = new THREE.Quaternion();
 
-const vecTrack = new THREE.Vector3();
-const vecTrackWrist = new THREE.Vector3();
+const vec1 = new THREE.Vector3();
+const vec2 = new THREE.Vector3();
 const vecOrth = new THREE.Vector3();
 let a = 0;
-export default function getRotMcp(
-  skeleton,
-  keypointsArray,
-  indexBot,
-  indexTop
-) {
+export default function getRotMcp(skeleton, keypointsArray, indexBot) {
   // const wrist = skeleton.bones[0];
   quatWristInverted.copy(skeleton.bones[0].quaternion).invert();
   let index0 = 0;
   let index1 = indexBot;
-  let index2 = indexTop;
+  let index2 = indexBot + 1;
   for (let i = 0; i < 3; i++) {
-    vecTrack
+    vec1
       .set(
         keypointsArray[index2 * 3 + 0] - keypointsArray[index1 * 3 + 0],
         keypointsArray[index2 * 3 + 1] - keypointsArray[index1 * 3 + 1],
         keypointsArray[index2 * 3 + 2] - keypointsArray[index1 * 3 + 2]
       )
       .normalize();
-    vecTrackWrist
+    vec2
       .set(
         keypointsArray[index1 * 3 + 0] - keypointsArray[index0 * 3 + 0],
         keypointsArray[index1 * 3 + 1] - keypointsArray[index0 * 3 + 1],
         keypointsArray[index1 * 3 + 2] - keypointsArray[index0 * 3 + 2]
       )
       .normalize();
-    vecOrth.crossVectors(vecTrackWrist, vecTrack);
+    vecOrth.crossVectors(vec2, vec1);
     const rotMag = 2 * Math.max(0, vecOrth.length() - 0.5);
     const boneMcp = skeleton.getBoneByName(
       `${getBoneName(index1, 3)}`
@@ -46,10 +41,32 @@ export default function getRotMcp(
       0.8
     );
     index0 = indexBot + i;
-    index1 = indexTop + i;
-    index2 = indexTop + 1 + i;
+    index1 = indexBot + 1 + i;
+    index2 = indexBot + 2 + i;
   }
-  // if (indexBot == 9) {
+  // if (indexBot == 5) {
+  //   index0 = indexBot + 1;
+  //   index1 = indexBot + 2;
+  //   index2 = indexBot + 3;
+  //   vecTrack
+  //     .set(
+  //       keypointsArray[index2 * 3 + 0] - keypointsArray[index1 * 3 + 0],
+  //       keypointsArray[index2 * 3 + 1] - keypointsArray[index1 * 3 + 1],
+  //       keypointsArray[index2 * 3 + 2] - keypointsArray[index1 * 3 + 2]
+  //     )
+  //     .normalize();
+  //   vecTrackWrist
+  //     .set(
+  //       keypointsArray[index0 * 3 + 0] - keypointsArray[index1 * 3 + 0],
+  //       keypointsArray[index0 * 3 + 1] - keypointsArray[index1 * 3 + 1],
+  //       keypointsArray[index0 * 3 + 2] - keypointsArray[index1 * 3 + 2]
+  //     )
+  //     .normalize();
+  //   vecOrth.crossVectors(vecTrackWrist, vecTrack);
+  //   const angle = vecTrackWrist.angleTo(vecTrack);
+  //   console.log('cross', vecOrth.length());
+  //   console.log('angle', angle);
+  // }
   //   index0 = indexBot + 1;
   //   index1 = indexTop + 1;
   //   index2 = indexTop + 2;

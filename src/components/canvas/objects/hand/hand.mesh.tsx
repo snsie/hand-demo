@@ -15,6 +15,7 @@ import getVecOrth from '@/utils/get-vec-orth';
 import getQuatTransformed from '@/utils/get-quat-transformed';
 import { handIndices } from '@/utils/store';
 import getRotMcp from '@/utils/get-rot-mcp';
+import getRotThumb from '@/utils/get-rot-thumb';
 type GLTFResult = GLTF & {
   nodes: {
     hand: THREE.SkinnedMesh;
@@ -42,7 +43,7 @@ const vectorBone = new THREE.Vector3();
 const vecBonePos0 = new THREE.Vector3();
 const vecBonePos1 = new THREE.Vector3();
 const vecBonePos2 = new THREE.Vector3();
-const vectorTrack = new THREE.Vector3();
+const vecOrtho = new THREE.Vector3();
 const vecFrom = new THREE.Vector3();
 const vecTo = new THREE.Vector3();
 
@@ -80,19 +81,19 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
 
   useFrame(() => {
     const wrist = nodes.hand.skeleton.bones[0];
-    const midMcp = nodes.hand.skeleton.getBoneByName(
-      `${addZeros(9, 3)}`
-    ) as THREE.Bone;
+    // const midMcp = nodes.hand.skeleton.getBoneByName(
+    //   `${addZeros(9, 3)}`
+    // ) as THREE.Bone;
 
-    const indexMcp = nodes.hand.skeleton.getBoneByName(
-      `${addZeros(5, 3)}`
-    ) as THREE.Bone;
-    const indexPip = nodes.hand.skeleton.getBoneByName(
-      `${addZeros(6, 3)}`
-    ) as THREE.Bone;
-    const indexDip = nodes.hand.skeleton.getBoneByName(
-      `${addZeros(7, 3)}`
-    ) as THREE.Bone;
+    // const indexMcp = nodes.hand.skeleton.getBoneByName(
+    //   `${addZeros(5, 3)}`
+    // ) as THREE.Bone;
+    // const indexPip = nodes.hand.skeleton.getBoneByName(
+    //   `${addZeros(6, 3)}`
+    // ) as THREE.Bone;
+    // const indexDip = nodes.hand.skeleton.getBoneByName(
+    //   `${addZeros(7, 3)}`
+    // ) as THREE.Bone;
 
     // quatWrist.copy(wrist.quaternion);
 
@@ -127,34 +128,66 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
     getRotMcp(
       nodes.hand.skeleton,
       keypoints3dRef.current,
-      handIndices.pinkyMcp,
-      handIndices.pinkyPip
+      handIndices.pinkyMcp
     );
     getRotMcp(
       nodes.hand.skeleton,
       keypoints3dRef.current,
-      handIndices.indexMcp,
-      handIndices.indexPip
+      handIndices.indexMcp
     );
     getRotMcp(
       nodes.hand.skeleton,
       keypoints3dRef.current,
-      handIndices.middleMcp,
-      handIndices.middlePip
+      handIndices.middleMcp
     );
 
-    getRotMcp(
-      nodes.hand.skeleton,
-      keypoints3dRef.current,
-      handIndices.ringMcp,
-      handIndices.ringPip
-    );
+    getRotMcp(nodes.hand.skeleton, keypoints3dRef.current, handIndices.ringMcp);
     wristPosition.set(
       viewport.width * basePosRef.current[0],
       viewport.height * basePosRef.current[1],
       0
     );
-    wrist.position.lerp(wristPosition, 0.75);
+    wrist.position.lerp(wristPosition, 0.65);
+    getRotThumb(
+      nodes.hand.skeleton,
+      keypoints3dRef.current,
+      handIndices.thumbCmc
+    );
+    // const thumbMcp = nodes.hand.skeleton.getBoneByName(
+    //   `${addZeros(1, 3)}`
+    // ) as THREE.Bone;
+
+    // const index0 = 0;
+
+    // const index1 = 1;
+    // const index2 = 2;
+
+    // vecFrom
+    //   .set(
+    //     keypoints3dRef.current[index2 * 3 + 0] -
+    //       keypoints3dRef.current[index1 * 3 + 0],
+    //     keypoints3dRef.current[index2 * 3 + 1] -
+    //       keypoints3dRef.current[index1 * 3 + 1],
+    //     keypoints3dRef.current[index2 * 3 + 2] -
+    //       keypoints3dRef.current[index1 * 3 + 2]
+    //   )
+    //   .normalize();
+    // vecTo
+    //   .set(
+    //     keypoints3dRef.current[index1 * 3 + 0] -
+    //       keypoints3dRef.current[index0 * 3 + 0],
+    //     keypoints3dRef.current[index1 * 3 + 1] -
+    //       keypoints3dRef.current[index0 * 3 + 1],
+    //     keypoints3dRef.current[index1 * 3 + 2] -
+    //       keypoints3dRef.current[index0 * 3 + 2]
+    //   )
+    //   .normalize();
+    // vecOrtho.crossVectors(vecFrom, vecTo);
+    // const thumbAngle = -Math.PI * Math.max(0, vecOrtho.length() - 0.25);
+    // console.log(thumbAngle);
+    // thumbMcp.rotation.y = thumbAngle;
+    // ////////////////////////////////////////////////////////////
+
     // getRotMcp(
     //   nodes.hand.skeleton,
     //   keypoints3dRef.current,

@@ -64,7 +64,7 @@ export default function getQuatWrist(
   // quatLon.setFromUnitVectors(vecFrom, vecTo);
   quatOrth.multiply(quatLat);
   quatFinal.copy(wrist.quaternion).premultiply(quatOrth);
-  wrist.quaternion.slerp(quatFinal, 0.75);
+  wrist.quaternion.slerp(quatFinal, 0.7);
 
   // .premultiply(quatLat);
   // vecFrom.copy(getVecOrth(vecBonePos0, vecBonePos1, vecBonePos2));
