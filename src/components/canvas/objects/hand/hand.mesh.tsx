@@ -13,6 +13,8 @@ import { useFrame, useThree } from '@react-three/fiber';
 import getQuatWrist from '@/utils/get-quat-wrist';
 import getVecOrth from '@/utils/get-vec-orth';
 import getQuatTransformed from '@/utils/get-quat-transformed';
+import { handIndices } from '@/utils/store';
+import getRotMcp from '@/utils/get-rot-mcp';
 type GLTFResult = GLTF & {
   nodes: {
     hand: THREE.SkinnedMesh;
@@ -61,54 +63,48 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
   ) as GLTFResult;
   const array1Ref = useRef('');
   const array2Ref = useRef([0, 0, 0]);
-  const wrist = nodes.hand.skeleton.bones[0];
+
   const [text1State, setText1State] = useState('[0, 0, 0]');
 
-  const midMcp = nodes.hand.skeleton.getBoneByName(
-    `${addZeros(9, 3)}`
-  ) as THREE.Bone;
-
-  const indexMcp = nodes.hand.skeleton.getBoneByName(
-    `${addZeros(5, 3)}`
-  ) as THREE.Bone;
-  const indexPip = nodes.hand.skeleton.getBoneByName(
-    `${addZeros(6, 3)}`
-  ) as THREE.Bone;
-  const indexDip = nodes.hand.skeleton.getBoneByName(
-    `${addZeros(7, 3)}`
-  ) as THREE.Bone;
-
-  useEffect(() => {
-    // indexMcp.quaternion.identity();
-    quatIndexMcpBase.copy(indexMcp.quaternion);
-    quatIndexPipBase.copy(indexPip.quaternion);
-    // quatIndexMcp.invert();
-    // quatWrist.copy(wrist.quaternion);
-    // baseQuatIndexMcp.copy(indexMcp.quaternion);
-  }, []);
+  // useEffect(() => {
+  //   // indexMcp.quaternion.identity();
+  //   quatIndexMcpBase.copy(indexMcp.quaternion);
+  //   quatIndexPipBase.copy(indexPip.quaternion);
+  //   // quatIndexMcp.invert();
+  //   // quatWrist.copy(wrist.quaternion);
+  //   // baseQuatIndexMcp.copy(indexMcp.quaternion);
+  // }, []);
 
   const { clock, viewport } = useThree();
   const prevVectorRef = useRef([0, 0, 1]);
 
   useFrame(() => {
+    const wrist = nodes.hand.skeleton.bones[0];
+    const midMcp = nodes.hand.skeleton.getBoneByName(
+      `${addZeros(9, 3)}`
+    ) as THREE.Bone;
+
+    const indexMcp = nodes.hand.skeleton.getBoneByName(
+      `${addZeros(5, 3)}`
+    ) as THREE.Bone;
+    const indexPip = nodes.hand.skeleton.getBoneByName(
+      `${addZeros(6, 3)}`
+    ) as THREE.Bone;
+    const indexDip = nodes.hand.skeleton.getBoneByName(
+      `${addZeros(7, 3)}`
+    ) as THREE.Bone;
+
     // quatWrist.copy(wrist.quaternion);
-    wristPosition.set(
-      viewport.width * basePosRef.current[0],
-      viewport.height * basePosRef.current[1],
-      0
-    );
-    wrist.position.lerp(wristPosition, 0.4);
+
     // quatWrist.copy(wrist.quaternion);
-    quatWrist.copy(wrist.quaternion);
+
     // quatWrist.copy(
-    getQuatWrist(
-      quatWrist,
-      nodes.hand.skeleton,
-      keypoints3dRef.current,
-      0,
-      1,
-      13
-    );
+    getQuatWrist(nodes.hand.skeleton, keypoints3dRef.current, 0, 5, 13);
+    // nodes.hand.matrixWorldNeedsUpdate = true;
+
+    // console.log(nodes.hand.updateMatrixWorld());
+
+    // console.log(nodes.hand.matrixWorld.toArray());
     // );
 
     // wrist.quaternion.slerp(quatWrist, 0.7);
@@ -120,7 +116,7 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
     //     .map((val) => val.toFixed(4))
     //     .join()
     // );
-    wrist.quaternion.slerp(quatWrist, 0.65);
+    // wrist.quaternion.slerp(quatWrist, 0.65);
     // wrist.applyQuaternion(quatWrist);
 
     // indexMcp.getWorldPosition(vecBonePos0);
@@ -128,54 +124,84 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
     // // midMcp.getWorldPosition(vecBonePos2);
     // // // pointMidMcp
     // vectorBone.subVectors(vecBonePos1, vecBonePos0).normalize();
+    getRotMcp(
+      nodes.hand.skeleton,
+      keypoints3dRef.current,
+      handIndices.pinkyMcp,
+      handIndices.pinkyPip
+    );
+    getRotMcp(
+      nodes.hand.skeleton,
+      keypoints3dRef.current,
+      handIndices.indexMcp,
+      handIndices.indexPip
+    );
+    getRotMcp(
+      nodes.hand.skeleton,
+      keypoints3dRef.current,
+      handIndices.middleMcp,
+      handIndices.middlePip
+    );
+
+    getRotMcp(
+      nodes.hand.skeleton,
+      keypoints3dRef.current,
+      handIndices.ringMcp,
+      handIndices.ringPip
+    );
+    wristPosition.set(
+      viewport.width * basePosRef.current[0],
+      viewport.height * basePosRef.current[1],
+      0
+    );
+    wrist.position.lerp(wristPosition, 0.75);
+    // getRotMcp(
+    //   nodes.hand.skeleton,
+    //   keypoints3dRef.current,
+    //   handIndices.indexPip,
+    //   handIndices.indexDip
+    // );
+
+    // getRotMcp(
+    //   wrist.quaternion,
+    //   nodes.hand.skeleton,
+    //   keypoints3dRef.current,
+    //   handIndices.indexPip,
+    //   handIndices.indexDip
+    // );
     // vectorTrack
     //   .set(
-    //     keypoints3dRef.current[pointIndexPip * 3 + 0] -
-    //       keypoints3dRef.current[pointIndexMcp * 3 + 0],
-    //     keypoints3dRef.current[pointIndexPip * 3 + 1] -
-    //       keypoints3dRef.current[pointIndexMcp * 3 + 1],
-    //     keypoints3dRef.current[pointIndexPip * 3 + 2] -
-    //       keypoints3dRef.current[pointIndexMcp * 3 + 2]
+    //     keypoints3dRef.current[pointIndexDip * 3 + 0] -
+    //       keypoints3dRef.current[pointIndexPip * 3 + 0],
+    //     keypoints3dRef.current[pointIndexDip * 3 + 1] -
+    //       keypoints3dRef.current[pointIndexPip * 3 + 1],
+    //     keypoints3dRef.current[pointIndexDip * 3 + 2] -
+    //       keypoints3dRef.current[pointIndexPip * 3 + 2]
     //   )
     //   .normalize();
-
-    // quaternion1.copy(quatWrist).invert();
-    // quaternion2.copy(quatIndexMcpBase).invert();
-    // quaternion1.premultiply(quaternion2);
-    // vectorBone.applyQuaternion(quaternion1);
+    // quaternion1.copy(wrist.quaternion).invert();
     // vectorTrack.applyQuaternion(quaternion1);
-    // // // // vectorBone.applyQuaternion(w)
-    // quatIndexMcp.setFromUnitVectors(vectorBone, vectorTrack);
 
-    getQuatTransformed(
-      quatIndexMcp,
-      nodes.hand.skeleton,
-      keypoints3dRef.current,
-      5,
-      6,
-      wrist.quaternion,
-      quatIndexMcpBase
-    );
+    // console.log(vectorTrack);
 
-    // quatIndexPipBase.multiply(indexMcp.quaternion);
-    // quatIndexPip;
-    quaternion1.copy(wrist.quaternion);
-    getQuatTransformed(
-      quatIndexPip,
-      nodes.hand.skeleton,
-      keypoints3dRef.current,
-      6,
-      7,
-      quaternion1,
-      quatIndexPipBase
-    );
+    // // const xRot = Math.sin(clock.getElapsedTime());
 
-    indexMcp.quaternion.slerp(quatIndexMcp, 0.5);
-    indexPip.quaternion.slerp(quatIndexPip, 0.5);
+    // indexMcp.rotation.x = (Math.PI / 2) * vectorTrack.z;
+
+    // indexMcp.rotation.y = -Math.PI / 10;
+    // indexPip.rotation.x = Math.PI / 2;
+    // indexDip.rotation.x = Math.PI / 2;
+    // indexMcp.rotation.z = 0;
+    // indexPip.
+    // indexMcp.quaternion.x = xRot;
+    // indexMcp.quaternion.w = Math.sqrt(1 - xRot * xRot);
+    // console.log(indexMcp.quaternion.w);
+    // console.log(indexMcp.quaternion);
+    // indexPip.quaternion.slerp(quatIndexPip, 0.5);
 
     // indexDip.quaternion.slerp(quatIndexPip, 0.5);
 
-    console.log(indexPip);
+    // console.log(indexPip);
     // indexTip.quaternion.slerp(quatIndexPip, 0.7);
     // indexPip.get(vecFrom);
     // vecTo.set(0, 1, 0);
@@ -197,12 +223,12 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
     // vectorBone.applyQuaternion(quaternion1);
     // quatIndexMcp.premultiply(quatWrist);
 
-    console.log(
-      vecTo
-        .toArray()
-        .map((val) => val.toFixed(4))
-        .join()
-    );
+    // console.log(
+    //   vecTo
+    //     .toArray()
+    //     .map((val) => val.toFixed(4))
+    //     .join()
+    // );
     // indexMcp.quat;
     // indexMcp.quaternion.copy(quatIndexMcp);
 

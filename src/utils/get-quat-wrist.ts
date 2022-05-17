@@ -11,6 +11,8 @@ const vecTo = new THREE.Vector3();
 
 const quatOrth = new THREE.Quaternion();
 const quatLat = new THREE.Quaternion();
+const quatLon = new THREE.Quaternion();
+const quatFinal = new THREE.Quaternion();
 // const quatComp = new THREE.Quaternion();
 // const quatFinal = new THREE.Quaternion();
 function addZeros(num, totalLength) {
@@ -21,13 +23,13 @@ function addZeros(num, totalLength) {
 // const point1 = 1;
 // const point2 = 13;
 export default function getQuatWrist(
-  quatFinal,
   skeleton,
   keypointsArray,
   point0,
   point1,
   point2
 ) {
+  const wrist = skeleton.bones[0];
   skeleton.getBoneByName(addZeros(point0, 3)).getWorldPosition(vecBonePos0);
   skeleton.getBoneByName(addZeros(point1, 3)).getWorldPosition(vecBonePos1);
   skeleton.getBoneByName(addZeros(point2, 3)).getWorldPosition(vecBonePos2);
@@ -53,13 +55,16 @@ export default function getQuatWrist(
   // vecFrom.subVectors(vecBonePos1, vecBonePos0).normalize();
   // vecTo.subVectors(vecTrackPos1, vecTrackPos0).normalize();
   quatOrth.setFromUnitVectors(vecFrom, vecTo);
-  vecFrom.subVectors(vecBonePos2, vecBonePos0).normalize();
-  vecTo.subVectors(vecTrackPos2, vecTrackPos0).normalize();
-  // vecFrom.applyQuaternion(quatOrth);
-  // vecTo.applyQuaternion(quatOrth);
+  vecFrom.subVectors(vecBonePos2, vecBonePos1).normalize();
+  vecTo.subVectors(vecTrackPos2, vecTrackPos1).normalize();
 
-  quatLat.setFromUnitVectors(vecFrom, vecTo).premultiply(quatOrth);
-  quatFinal.premultiply(quatLat);
+  quatLat.setFromUnitVectors(vecFrom, vecTo);
+  // vecFrom.subVectors(vecBonePos1, vecBonePos0).normalize();
+  // vecTo.subVectors(vecTrackPos1, vecTrackPos0).normalize();
+  // quatLon.setFromUnitVectors(vecFrom, vecTo);
+  quatOrth.multiply(quatLat);
+  quatFinal.copy(wrist.quaternion).premultiply(quatOrth);
+  wrist.quaternion.slerp(quatFinal, 0.75);
 
   // .premultiply(quatLat);
   // vecFrom.copy(getVecOrth(vecBonePos0, vecBonePos1, vecBonePos2));
