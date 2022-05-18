@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import getBoneName from './get-bone-name';
 import getVecOrth from './get-vec-orth';
 const vecBonePos0 = new THREE.Vector3();
 const vecBonePos1 = new THREE.Vector3();
@@ -29,7 +30,8 @@ export default function getQuatWrist(
   point1,
   point2
 ) {
-  const wrist = skeleton.bones[0];
+  const wrist = skeleton.getBoneByName(`${getBoneName(0)}`) as THREE.Bone;
+  // const wrist = skeleton.getBoneByName[0];
   skeleton.getBoneByName(addZeros(point0, 3)).getWorldPosition(vecBonePos0);
   skeleton.getBoneByName(addZeros(point1, 3)).getWorldPosition(vecBonePos1);
   skeleton.getBoneByName(addZeros(point2, 3)).getWorldPosition(vecBonePos2);

@@ -1,3 +1,3 @@
-export default function getBoneName(num, totalLength) {
-  return `bone${String(num).padStart(totalLength, '0')}`;
+export default function getBoneName(num) {
+  return `bone${String(num).padStart(3, '0')}`;
 }

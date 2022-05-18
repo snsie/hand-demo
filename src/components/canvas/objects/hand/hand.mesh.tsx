@@ -16,6 +16,9 @@ import getQuatTransformed from '@/utils/get-quat-transformed';
 import { handIndices } from '@/utils/store';
 import getRotMcp from '@/utils/get-rot-mcp';
 import getRotThumb from '@/utils/get-rot-thumb';
+import getBoneName from '@/utils/get-bone-name';
+import logArray from '@/utils/log-array';
+
 type GLTFResult = GLTF & {
   nodes: {
     hand: THREE.SkinnedMesh;
@@ -25,39 +28,30 @@ type GLTFResult = GLTF & {
     ['Material #46']: THREE.MeshStandardMaterial;
   };
 };
-const quatWrist = new THREE.Quaternion();
-// const quatWristSmoothed = new THREE.Quaternion(0, 0, 0, 1);
-const quatWristBase = new THREE.Quaternion();
-const quatIndexMcp = new THREE.Quaternion();
-const quatIndexPip = new THREE.Quaternion();
-const wristPosition = new THREE.Vector3();
-const quatIndexMcpBase = new THREE.Quaternion();
-const quatIndexPipBase = new THREE.Quaternion();
-
-const quaternion1 = new THREE.Quaternion();
-const quaternion2 = new THREE.Quaternion();
-const quatFinal = new THREE.Quaternion();
 // const quatWrist = new THREE.Quaternion();
-// const quaternion2 = new ThreejsQuaternion();
-const vectorBone = new THREE.Vector3();
-const vecBonePos0 = new THREE.Vector3();
-const vecBonePos1 = new THREE.Vector3();
-const vecBonePos2 = new THREE.Vector3();
-const vecOrtho = new THREE.Vector3();
-const vecFrom = new THREE.Vector3();
-const vecTo = new THREE.Vector3();
+// const quatWristSmoothed = new THREE.Quaternion(0, 0, 0, 1);
 
+const wristPosition = new THREE.Vector3();
+
+const quat1 = new THREE.Quaternion();
+const quat2 = new THREE.Quaternion();
+const eul1 = new THREE.Euler();
+const vec1 = new THREE.Vector3();
+const vec2 = new THREE.Vector3();
+// const vecOrtho = new THREE.Vector3();
+// const vecFrom = new THREE.Vector3();
+// const vecTo = new THREE.Vector3();
+const mat = new THREE.Matrix4();
+// const matInv = new THREE.Matrix4();
+// const axis = new THREE.Vector3(0, 1, 0);
 // const vectorTrack1 = new THREE.Vector3();
 
-function addZeros(num, totalLength) {
-  return `bone${String(num).padStart(totalLength, '0')}`;
-}
 const pointIndexMcp = 5;
 const pointIndexPip = 6;
 const pointIndexDip = 7;
 const pointMidMcp = 9;
 export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
-  const group = useRef<THREE.Group>(null!);
+  const groupRef = useRef<THREE.Group>(null!);
   const textRef = useRef<THREE.Mesh>(null!);
   const { nodes, materials } = useGLTF(
     '/gltf/hand_model_parented_sub.glb'
@@ -65,8 +59,9 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
   const array1Ref = useRef('');
   const array2Ref = useRef([0, 0, 0]);
 
-  const [text1State, setText1State] = useState('[0, 0, 0]');
-
+  // const [text1State, setText1State] = useState('[0, 0, 0]');
+  const skinnedMeshRef = useRef<any>(null!);
+  const boneRef = useRef<THREE.Bone>(null!);
   // useEffect(() => {
   //   // indexMcp.quaternion.identity();
   //   quatIndexMcpBase.copy(indexMcp.quaternion);
@@ -80,27 +75,33 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
   const prevVectorRef = useRef([0, 0, 1]);
 
   useFrame(() => {
-    const wrist = nodes.hand.skeleton.bones[0];
-    // const midMcp = nodes.hand.skeleton.getBoneByName(
+    // const midMcp = skinnedMeshRef.current.skeleton.getBoneByName(
     //   `${addZeros(9, 3)}`
     // ) as THREE.Bone;
 
-    // const indexMcp = nodes.hand.skeleton.getBoneByName(
+    // const indexMcp = skinnedMeshRef.current.skeleton.getBoneByName(
     //   `${addZeros(5, 3)}`
     // ) as THREE.Bone;
-    // const indexPip = nodes.hand.skeleton.getBoneByName(
+    // const indexPip = skinnedMeshRef.current.skeleton.getBoneByName(
     //   `${addZeros(6, 3)}`
     // ) as THREE.Bone;
-    // const indexDip = nodes.hand.skeleton.getBoneByName(
+    // const indexDip = skinnedMeshRef.current.skeleton.getBoneByName(
     //   `${addZeros(7, 3)}`
     // ) as THREE.Bone;
 
-    // quatWrist.copy(wrist.quaternion);
-
-    // quatWrist.copy(wrist.quaternion);
-
-    // quatWrist.copy(
-    getQuatWrist(nodes.hand.skeleton, keypoints3dRef.current, 0, 5, 13);
+    wristPosition.set(
+      viewport.width * basePosRef.current[0],
+      viewport.height * basePosRef.current[1],
+      0
+    );
+    groupRef.current.position.lerp(wristPosition, 0.65);
+    getQuatWrist(
+      skinnedMeshRef.current.skeleton,
+      keypoints3dRef.current,
+      0,
+      5,
+      13
+    );
     // nodes.hand.matrixWorldNeedsUpdate = true;
 
     // console.log(nodes.hand.updateMatrixWorld());
@@ -126,37 +127,94 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
     // // // pointMidMcp
     // vectorBone.subVectors(vecBonePos1, vecBonePos0).normalize();
     getRotMcp(
-      nodes.hand.skeleton,
+      skinnedMeshRef.current.skeleton,
       keypoints3dRef.current,
       handIndices.pinkyMcp
     );
     getRotMcp(
-      nodes.hand.skeleton,
+      skinnedMeshRef.current.skeleton,
       keypoints3dRef.current,
       handIndices.indexMcp
     );
     getRotMcp(
-      nodes.hand.skeleton,
+      skinnedMeshRef.current.skeleton,
       keypoints3dRef.current,
       handIndices.middleMcp
     );
 
-    getRotMcp(nodes.hand.skeleton, keypoints3dRef.current, handIndices.ringMcp);
-    wristPosition.set(
-      viewport.width * basePosRef.current[0],
-      viewport.height * basePosRef.current[1],
-      0
+    getRotMcp(
+      skinnedMeshRef.current.skeleton,
+      keypoints3dRef.current,
+      handIndices.ringMcp
     );
-    wrist.position.lerp(wristPosition, 0.65);
+
     getRotThumb(
-      nodes.hand.skeleton,
+      skinnedMeshRef.current.skeleton,
       keypoints3dRef.current,
       handIndices.thumbCmc
     );
-    // const thumbMcp = nodes.hand.skeleton.getBoneByName(
-    //   `${addZeros(1, 3)}`
-    // ) as THREE.Bone;
+    const thumbMcp = skinnedMeshRef.current.skeleton.getBoneByName(
+      `${getBoneName(1)}`
+    ) as THREE.Bone;
 
+    // console.log(thumbMcp.rotation.set(0, 0, 0));
+    // console.log(group.current.children[1].position.);
+    // const bone = skinnedMeshRef.current.children[0];
+    // console.log(thumbMcp.matrixWorld.toArray());
+    // mat.copy(thumbMcp.matrix).invert();
+    quat1.copy(thumbMcp.quaternion);
+    eul1.copy(thumbMcp.rotation);
+    // mat.makeRotationX(Math.PI / 2);
+    // eul1.x = Math.PI / 2;
+    quat2.copy(thumbMcp.quaternion);
+    // thumbMcp.matrixAutoUpdate = false;
+
+    // console.log(vec2.toArray());
+    // console.log(
+    //   'eul',
+    //   quat1
+    //     .toArray()
+    //     .map((val) => val.toFixed(4))
+    //     .join()
+    // );
+    // vec1.set(-1, 0, 0).normalize();
+    // vec1.applyQuaternion()
+    // console.log(
+    //   'bone',
+    //   thumbMcp.rotation.toArray().map((val) => typeof val)
+    // );
+    // logArray(eul1.toArray());
+    // thumbMcp.rotation.copy(eul1);
+    // thumbMcp.rotation.set(0, Math.PI, 0);
+    // vec1.applyEuler(thumbMcp.rotation);
+    // thumbMcp.rotation.y = -2*(1 + Math.sin(clock.getElapsedTime()));
+    // thumbMcp.rotation.y = -2 *  clock.getElapsedTime();
+
+    // thumbMcp.rotation.y = -Math.PI / 2.4;
+    // quat1.copy(skinnedMeshRef.current.skeleton.bones[0].quaternion).invert();
+    // vec1.applyQuaternion(quat1);
+    // logArray(skinnedMeshRef.current.skeleton.bones[0].quaternion.toArray());
+
+    // console.log(skinnedMeshRef.current.skeleton.bones[0].quaternion);
+    // ///////////////////////////////////////////////
+    // thumbMcp.setRotationFromAxisAngle()
+    // vec1.transformDirection(thumbMcp.matrix);
+    // thumbMcp.d
+    // thumbMcp.lookAt(vec1);
+    // thumbMcp.matrix.premultiply(mat);
+    // thumbMcp.updateMatrix();
+    // console.log(thumbMcp.matrix.toArray());
+    // matInv.copy(thumbMcp.matrix).invert();
+    // mat.makeRotationX(Math.PI / 2);
+    // thumbMcp.rotateOnAxis(axis, Math.PI / 2);
+    //
+    // thumbMcp.matrix.copy(mat);
+    // thumbMcp.updateMatrix();
+    // thumbMcp.rotation.x = 0;
+    // const thumbDip = skinnedMeshRef.current.skeleton.getBoneByName(
+    //   `${addZeros(2, 3)}`
+    // ) as THREE.Bone;
+    // thumbDip.rotation.x = Math.PI / 2;
     // const index0 = 0;
 
     // const index1 = 1;
@@ -189,7 +247,7 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
     // ////////////////////////////////////////////////////////////
 
     // getRotMcp(
-    //   nodes.hand.skeleton,
+    //   skinnedMeshRef.current.skeleton,
     //   keypoints3dRef.current,
     //   handIndices.indexPip,
     //   handIndices.indexDip
@@ -197,7 +255,7 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
 
     // getRotMcp(
     //   wrist.quaternion,
-    //   nodes.hand.skeleton,
+    //   skinnedMeshRef.current.skeleton,
     //   keypoints3dRef.current,
     //   handIndices.indexPip,
     //   handIndices.indexDip
@@ -242,7 +300,7 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
     // quatIndexMcp.copy(quatIndexMcpBase).premultiply(quatWrist);
     // getQuatWrist(
     //   quatIndexMcp,
-    //   nodes.hand.skeleton,
+    //   skinnedMeshRef.current.skeleton,
     //   keypoints3dRef.current,
     //   5,
     //   6,
@@ -305,7 +363,7 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
     // quaternion2.copy(wrist.quaternion);
     // getQuatWrist(
     //   quaternion1,
-    //   nodes.hand.skeleton,
+    //   skinnedMeshRef.current.skeleton,
     //   keypoints3dRef.current,
     //   5,
     //   6,
@@ -317,7 +375,7 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
     // console.log(baseQuatIndexMcp);
     // quaternion2.copy(indexMcp.quaternion);
     // quaternion1
-    //   .copy(getQuatWrist(nodes.hand.skeleton, keypoints3dRef.current, 5, 6, 9))
+    //   .copy(getQuatWrist(skinnedMeshRef.current.skeleton, keypoints3dRef.current, 5, 6, 9))
     //   .multiply(quatWrist);
 
     // quaternion1
@@ -337,11 +395,11 @@ export default function HandMesh({ basePosRef, keypoints3dRef, ...props }) {
 
     // indexPip.rotation.x += 0.1;
   });
-
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group ref={groupRef} {...props} dispose={null}>
       <primitive object={nodes.bone000} />
       <skinnedMesh
+        ref={skinnedMeshRef}
         geometry={nodes.hand.geometry}
         material={materials['Material #46']}
         skeleton={nodes.hand.skeleton}

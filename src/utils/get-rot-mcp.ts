@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import getBoneName from './get-bone-name';
+import getBoneName from '@/utils/get-bone-name';
 
 const quatWristInverted = new THREE.Quaternion();
 const quatMcpInverted = new THREE.Quaternion();
@@ -32,7 +32,7 @@ export default function getRotMcp(skeleton, keypointsArray, indexBot) {
     vecOrth.crossVectors(vec2, vec1);
     const rotMag = 2 * Math.max(0, vecOrth.length() - 0.5);
     const boneMcp = skeleton.getBoneByName(
-      `${getBoneName(index1, 3)}`
+      `${getBoneName(index1)}`
     ) as THREE.Bone;
 
     boneMcp.rotation.x = THREE.MathUtils.lerp(
