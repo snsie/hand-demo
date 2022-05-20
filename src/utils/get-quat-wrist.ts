@@ -24,6 +24,7 @@ function addZeros(num, totalLength) {
 // const point1 = 1;
 // const point2 = 13;
 export default function getQuatWrist(
+  handLabel,
   groupRef,
   skeleton,
   keypointsArray,
@@ -31,11 +32,18 @@ export default function getQuatWrist(
   point1,
   point2
 ) {
+  const pointFinal1 = point2;
+  const pointFinal2 = point1;
+  // console.log(pointFinal1);
   const wrist = skeleton.getBoneByName(`${getBoneName(0)}`) as THREE.Bone;
   // const wrist = skeleton.getBoneByName[0];
   skeleton.getBoneByName(addZeros(point0, 3)).getWorldPosition(vecBonePos0);
-  skeleton.getBoneByName(addZeros(point1, 3)).getWorldPosition(vecBonePos1);
-  skeleton.getBoneByName(addZeros(point2, 3)).getWorldPosition(vecBonePos2);
+  skeleton
+    .getBoneByName(addZeros(pointFinal1, 3))
+    .getWorldPosition(vecBonePos1);
+  skeleton
+    .getBoneByName(addZeros(pointFinal2, 3))
+    .getWorldPosition(vecBonePos2);
 
   vecTrackPos0.set(
     keypointsArray[point0 * 3 + 0],
@@ -43,14 +51,14 @@ export default function getQuatWrist(
     keypointsArray[point0 * 3 + 2]
   );
   vecTrackPos1.set(
-    keypointsArray[point1 * 3 + 0],
-    keypointsArray[point1 * 3 + 1],
-    keypointsArray[point1 * 3 + 2]
+    keypointsArray[pointFinal1 * 3 + 0],
+    keypointsArray[pointFinal1 * 3 + 1],
+    keypointsArray[pointFinal1 * 3 + 2]
   );
   vecTrackPos2.set(
-    keypointsArray[point2 * 3 + 0],
-    keypointsArray[point2 * 3 + 1],
-    keypointsArray[point2 * 3 + 2]
+    keypointsArray[pointFinal2 * 3 + 0],
+    keypointsArray[pointFinal2 * 3 + 1],
+    keypointsArray[pointFinal2 * 3 + 2]
   );
 
   vecFrom.copy(getVecOrth(vecBonePos0, vecBonePos1, vecBonePos2));

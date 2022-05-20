@@ -1,4 +1,4 @@
-import { numKeypoints, numKeypoints3d } from '@/tfjs/tfjs-params';
+import { numKeypoints, numKeypoints3d } from '@/utils/store';
 import { fingerLookupIndices } from '@/webcam/webcam-params';
 import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';

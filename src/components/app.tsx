@@ -14,7 +14,7 @@ import testSupport from '@/utils/test-support';
 const App = () => {
   testSupport([{ client: 'Chrome' }]);
   // const basePosRef = useRef([1, 0, 0, 0]);
-  const [basePosRef, keypointsRef] = useMediapipeHook();
+  const handRefs = useMediapipeHook();
   // const [quaternionRef, keypointsRef] = useTfjsWorkerHook();
   return (
     <ThemeProvider theme={themeColors}>
@@ -22,7 +22,7 @@ const App = () => {
         {/* {Math.random()} */}
         {/* <ButtonAppBar taskCallback={setSelectedIndex} /> */}
         <AppDom />
-        <AppCanvas basePosRef={basePosRef} keypoints3dRef={keypointsRef} />
+        <AppCanvas handRefs={handRefs} />
       </div>
     </ThemeProvider>
   );

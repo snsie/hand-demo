@@ -4,7 +4,7 @@ import webcamSetup from '@/webcam/webcam-setup';
 import WebcamStream from '@/webcam/webcam';
 // import webcamDraw from '@/webcam/webcam-draw';
 // import { drawWaitTime, imageHeight, imageWidth } from '@/webcam/webcam-params';
-import { numKeypoints3d } from '@/tfjs/tfjs-params';
+import { numKeypoints3d } from '@/utils/store';
 import * as mpHands from '@mediapipe/hands';
 
 const config = {
@@ -20,11 +20,15 @@ const point2 = 17;
 const point3 = 2;
 const updateGamma = 0.2;
 
+const handLabels = { Left: false, Right: false };
 export default function useMediapipeHook() {
   // const model = handPoseDetection.SupportedModels.MediaPipeHands;
 
-  const basePosRef = useRef([0, 0, 0]);
-  const keypointsRef = useRef(new Float32Array(numKeypoints3d));
+  const basePosRightRef = useRef([0, 0, 0]);
+  const basePosLeftRef = useRef([0, 0, 0]);
+  const keypointsRightRef = useRef(new Float32Array(numKeypoints3d));
+  const keypointsLeftRef = useRef(new Float32Array(numKeypoints3d));
+  const handLabelRefs = useRef(handLabels);
 
   const hands = useMemo(() => {
     // console.log((dpr * widthScale) / heightScale);
@@ -38,35 +42,61 @@ export default function useMediapipeHook() {
       minTrackingConfidence: 0.75,
     });
     function onResults(results) {
-      const keypointsArray3d: number[] = [];
       // multiHandWorldLandmarks
-      if (results.multiHandLandmarks[0]) {
-        // console.log(results.multiHandedness[0].label);
-        for (let i = 0; i < results.multiHandLandmarks[0].length; i++) {
+      // console.log(results.multiHandLandmarks.length);
+      const detectedHandLabels = { ...handLabels };
+
+      for (let i = 0; i < results.multiHandLandmarks.length; i++) {
+        const keypointsArray3d: number[] = [];
+        detectedHandLabels[results.multiHandedness[i].label] = true;
+
+        for (let j = 0; j < results.multiHandLandmarks[i].length; j++) {
           keypointsArray3d.push(
-            results.multiHandWorldLandmarks[0][i].x,
-            -results.multiHandWorldLandmarks[0][i].y,
-            results.multiHandWorldLandmarks[0][i].z
+            results.multiHandWorldLandmarks[i][j].x,
+            -results.multiHandWorldLandmarks[i][j].y,
+            results.multiHandWorldLandmarks[i][j].z
           );
         }
         // console.log(results.multiHandWorldLandmarks[0][17].y);
-        keypointsRef.current.forEach(
-          (val, index) =>
-            (keypointsRef.current[index] =
-              keypointsArray3d[index] * updateGamma + val * (1 - updateGamma))
-        );
+
         // console.log(results);
-        const currentBasePos = [
-          -0.5 + results.multiHandLandmarks[0][globalPosJoint].x,
-          0.6 - results.multiHandLandmarks[0][globalPosJoint].y,
-          -results.multiHandLandmarks[0][globalPosJoint].z,
-        ];
-        basePosRef.current.forEach(
-          (val, index) =>
-            (basePosRef.current[index] =
-              currentBasePos[index] * updateGamma + val * (1 - updateGamma))
-        );
+
+        if (results.multiHandedness[i].label === 'Right') {
+          const currentBasePos = [
+            -0.5 + results.multiHandLandmarks[i][globalPosJoint].x,
+            0.6 - results.multiHandLandmarks[i][globalPosJoint].y,
+            -results.multiHandLandmarks[i][globalPosJoint].z,
+          ];
+
+          basePosRightRef.current.forEach(
+            (val, index) =>
+              (basePosRightRef.current[index] =
+                currentBasePos[index] * updateGamma + val * (1 - updateGamma))
+          );
+          keypointsRightRef.current.forEach(
+            (val, index) =>
+              (keypointsRightRef.current[index] =
+                keypointsArray3d[index] * updateGamma + val * (1 - updateGamma))
+          );
+        } else {
+          const currentBasePos = [
+            -0.5 + results.multiHandLandmarks[i][globalPosJoint].x,
+            0.6 - results.multiHandLandmarks[i][globalPosJoint].y,
+            -results.multiHandLandmarks[i][globalPosJoint].z,
+          ];
+          basePosLeftRef.current.forEach(
+            (val, index) =>
+              (basePosLeftRef.current[index] =
+                currentBasePos[index] * updateGamma + val * (1 - updateGamma))
+          );
+          keypointsLeftRef.current.forEach(
+            (val, index) =>
+              (keypointsLeftRef.current[index] =
+                keypointsArray3d[index] * updateGamma + val * (1 - updateGamma))
+          );
+        }
       }
+      handLabelRefs.current = { ...detectedHandLabels };
     }
     hands.onResults(onResults);
     return hands;
@@ -96,5 +126,11 @@ export default function useMediapipeHook() {
       cleanupWebCam();
     };
   }, []);
-  return [basePosRef, keypointsRef];
+  return [
+    handLabelRefs,
+    basePosRightRef,
+    keypointsRightRef,
+    basePosLeftRef,
+    keypointsLeftRef,
+  ];
 }
