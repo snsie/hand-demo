@@ -39,7 +39,6 @@ export default function useMediapipeHook() {
     });
     function onResults(results) {
       const keypointsArray3d: number[] = [];
-
       // multiHandWorldLandmarks
       if (results.multiHandLandmarks[0]) {
         // console.log(results.multiHandedness[0].label);

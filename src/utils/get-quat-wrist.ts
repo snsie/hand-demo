@@ -24,6 +24,7 @@ function addZeros(num, totalLength) {
 // const point1 = 1;
 // const point2 = 13;
 export default function getQuatWrist(
+  groupRef,
   skeleton,
   keypointsArray,
   point0,
@@ -65,8 +66,8 @@ export default function getQuatWrist(
   // vecTo.subVectors(vecTrackPos1, vecTrackPos0).normalize();
   // quatLon.setFromUnitVectors(vecFrom, vecTo);
   quatOrth.multiply(quatLat);
-  quatFinal.copy(wrist.quaternion).premultiply(quatOrth);
-  wrist.quaternion.slerp(quatFinal, 0.7);
+  quatFinal.copy(groupRef.quaternion).premultiply(quatOrth);
+  groupRef.quaternion.slerp(quatFinal, 0.7);
 
   // .premultiply(quatLat);
   // vecFrom.copy(getVecOrth(vecBonePos0, vecBonePos1, vecBonePos2));
