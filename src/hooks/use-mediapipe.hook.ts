@@ -38,8 +38,8 @@ export default function useMediapipeHook() {
       selfieMode: true,
       maxNumHands: 2,
       modelComplexity: 1,
-      minDetectionConfidence: 0.75,
-      minTrackingConfidence: 0.75,
+      minDetectionConfidence: 0.65,
+      minTrackingConfidence: 0.65,
     });
     function onResults(results) {
       // multiHandWorldLandmarks

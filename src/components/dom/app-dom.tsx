@@ -28,7 +28,7 @@ export default function AppDom() {
         introduction to python
       </h4>
       {/* <TaskTitle titleIndex={selectedIndex} /> */}
-      <h3>Display your hands to your webcam!</h3>
+      <h3>Show your palms to the webcam!</h3>
       <Suspense fallback={<WaitSpinner />}>
         <HandTask />
       </Suspense>

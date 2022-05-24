@@ -26,7 +26,7 @@ export default function getRotThumb(skeleton, keypointsArray, indexBot) {
     .normalize();
   vecOrth.crossVectors(vec1, vec2);
   const thumbAngle =
-    -0.5 - Math.PI * 1.25 * Math.max(0, vecOrth.length() - 0.25);
+    -0.5 - Math.PI * 0.61 * Math.max(0, vecOrth.length() - 0.15);
   //   console.log(thumbAngle);
   const thumbMcp = skeleton.getBoneByName(
     `${getBoneName(indexBot)}`
@@ -60,7 +60,7 @@ export default function getRotThumb(skeleton, keypointsArray, indexBot) {
       )
       .normalize();
     vecOrth.crossVectors(vec1, vec2);
-    const thumbAngle = Math.PI * 1.5 * Math.max(0, vecOrth.length() - 0.25);
+    const thumbAngle = Math.PI * 1.15 * Math.max(0, vecOrth.length() - 0.1);
     // console.log(thumbAngle);
     const thumbBone = skeleton.getBoneByName(
       `${getBoneName(index1)}`

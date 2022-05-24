@@ -20,8 +20,8 @@ export default function testSupport(supportedDevices: { client: string }[]) {
   if (!isSupported) {
     alert(
       `This demo, running on ${detectedDevice.client!.name} ` +
-        `is not supported at this time. This demo relies on the OffscreenCanvas API, ` +
-        `which is only supported in Chrome.`
+        `may not work as expected. ` +
+        `This demo works best with Chrome on a desktop.`
     );
   }
 }

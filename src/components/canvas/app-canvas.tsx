@@ -2,7 +2,7 @@ import { Canvas } from '@react-three/fiber';
 // import BoxAnimatedMesh from '@/components/canvas/objects/box-animated/box-animated.mesh';
 import styles from '@/styles/app-canvas.styles.module.css';
 import HandMesh from './objects/hand/hand.mesh';
-import { Environment, OrbitControls } from '@react-three/drei';
+// import { Environment, OrbitControls } from '@react-three/drei';
 import { Suspense } from 'react';
 // import HandSkeletonLines from './objects/hand/hand-skeleton-lines.mesh';
 // import HandSkeletonJoints from './objects/hand/hand-skeleton-joints.mesh';
@@ -20,6 +20,8 @@ export default function AppCanvas({ handRefs, ...props }) {
     <Canvas className={styles.appCanvas}>
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
+      <pointLight position={[-5, 5, 4]} />
+
       {/* <BoxAnimatedMesh position={[0, 0, -3]} /> */}
       {/* <HandSkeletonLines keypoints3dRef={keypointsRightRef} />
       <HandSkeletonJoints keypoints3dRef={keypointsRightRef} />
@@ -43,9 +45,9 @@ export default function AppCanvas({ handRefs, ...props }) {
         />
       </Suspense>
 
-      <Suspense fallback={null}>
+      {/* <Suspense fallback={null}>
         <Environment preset="warehouse" />
-      </Suspense>
+      </Suspense> */}
       {/* <OrbitControls /> */}
     </Canvas>
   );
